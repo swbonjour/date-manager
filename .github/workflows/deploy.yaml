@@ -79,8 +79,8 @@ jobs:
       # Копирование файлов на сервер
       - name: Copy files to server
         run: |
-          scp -r frontend/dist ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/build
-          scp -r backend/dist ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/backend
+          scp -r frontend/build ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/
+          scp -r backend/dist ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/
           scp docker-compose.yaml ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/app/docker-compose.yml
 
       # Деплой на сервер
@@ -94,9 +94,6 @@ jobs:
             
             # Запускаем контейнеры
             docker-compose up -d
-            
-            # Очистка
-            sudo rm -rf /tmp/frontend-dist /tmp/backend-dist
             
             echo "Deployment completed successfully!"
           EOF
