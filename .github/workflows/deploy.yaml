@@ -80,8 +80,8 @@ jobs:
       - name: Copy files to server
         run: |
           scp -r frontend/build ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/
-          scp -r backend/dist ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/
-          scp docker-compose.yaml ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/docker-compose.yml
+          scp -r backend/ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/
+          scp docker-compose.yaml ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/
 
       # Деплой на сервер
       - name: Deploy to server
@@ -94,6 +94,10 @@ jobs:
             
             # Запускаем контейнеры
             docker-compose up -d
+
+            pm2 stop main
+
+            pm2 start main
             
             echo "Deployment completed successfully!"
           EOF
