@@ -1,0 +1,99 @@
+# .github/workflows/deploy.yml
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: |
+            frontend/package-lock.json
+            backend/package-lock.json
+
+      - name: Install Frontend Dependencies
+        run: cd frontend && npm install
+
+      - name: Install Backend Dependencies
+        run: cd backend && npm install
+
+  build-and-deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      # Сборка фронтенда
+      - name: Build Frontend
+        run: |
+          cd frontend
+          npm install
+          npm run build
+
+      # Сборка бэкенда
+      - name: Build Backend
+        run: |
+          cd backend
+          npm install
+          npm run build
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Add server to known hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+
+      # Копирование файлов на сервер
+      - name: Copy files to server
+        run: |
+          scp -r frontend/dist ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/build
+          scp -r backend/dist ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/backend
+          scp docker-compose.yaml ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/app/docker-compose.yml
+
+      # Деплой на сервер
+      - name: Deploy to server
+        run: |
+          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
+            cd /var/www/
+            
+            # Останавливаем старые контейнеры
+            docker-compose down
+            
+            # Запускаем контейнеры
+            docker-compose up -d
+            
+            # Очистка
+            sudo rm -rf /tmp/frontend-dist /tmp/backend-dist
+            
+            echo "Deployment completed successfully!"
+          EOF
