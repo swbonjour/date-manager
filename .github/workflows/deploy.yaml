@@ -47,6 +47,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22"
+          cache: "npm"
+          сache-dependency-path: |
+            frontend/package-lock.json
+            backend/package-lock.json
 
       # Сборка фронтенда
       - name: Build Frontend
