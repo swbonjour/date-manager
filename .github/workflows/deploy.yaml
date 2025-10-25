@@ -81,7 +81,7 @@ jobs:
         run: |
           scp -r frontend/build ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/
           scp -r backend/dist ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/
-          scp docker-compose.yaml ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/app/docker-compose.yml
+          scp docker-compose.yaml ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/docker-compose.yml
 
       # Деплой на сервер
       - name: Deploy to server
