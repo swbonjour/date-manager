@@ -259,9 +259,4 @@
 		font-weight: 400;
 		font-size: 12px;
 	}
-
-	.auth-page_checkbox input:checked {
-		-webkit-appearance: none;
-		background-color: var(--color-accent);
-	}
 </style>
