@@ -11,7 +11,8 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"format": "prettier --write .",
-		"lint": "prettier --check . && eslint ."
+		"lint": "prettier --check . && eslint .",
+		"swaggen": "swagger-typescript-api generate -d --path http://localhost:3000/api-json -o ./src/lib/utils/ -n client.ts --api-class-name SchedlyApi --unwrap-response-data --extract-request-params --extract-enums --axios"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.4.0",
@@ -35,6 +36,7 @@
 	"dependencies": {
 		"axios": "^1.12.2",
 		"jwt-decode": "^4.0.0",
-		"socket.io-client": "^4.8.1"
+		"socket.io-client": "^4.8.1",
+		"swagger-typescript-api": "^13.2.16"
 	}
 }

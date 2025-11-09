@@ -1,3 +1,4 @@
+import { PUBLIC_HTTP_SERVER_URL } from '$env/static/public';
 import { io, Socket } from 'socket.io-client';
 import { writable } from 'svelte/store';
 
@@ -8,7 +9,7 @@ export const messages = writable(
 );
 
 export const initSocket = () => {
-	socket = io('http://109.69.18.59:3000/');
+	socket = io(PUBLIC_HTTP_SERVER_URL);
 
 	socket.on('connect', () => {
 		console.log('connect');

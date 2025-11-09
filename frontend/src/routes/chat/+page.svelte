@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { apiRequest } from '$lib/assets/api';
-	import { initSocket, messages, sendGlobalMessage } from '$lib/assets/socket';
+	import { initSocket, messages, sendGlobalMessage } from '$lib/utils/socket';
 	import Button from '$lib/components/button.svelte';
 	import { userStore } from '$lib/stores/user-store';
 	import { onMount } from 'svelte';
+	import { client } from '$lib/utils';
 
 	let chats = $state<{ id: string; login: string }[]>();
 
@@ -40,7 +40,7 @@
 	};
 
 	const getChats = async (): Promise<{ id: string; login: string }[]> => {
-		return await apiRequest('get', '/user', {});
+		return await client.user.userControllerGetAllUsers();
 	};
 
 	const sendMessageToGlobalChat = () => {
@@ -49,7 +49,6 @@
 
 	onMount(async () => {
 		initSocket();
-		$userStore.init();
 		chats = await getChats();
 		const chatsMap = new Map();
 		for (const item of chats) {

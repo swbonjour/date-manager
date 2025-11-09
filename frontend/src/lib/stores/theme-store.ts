@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import { themes, ThemesName } from '$lib/assets/themes';
+import { themes, ThemesName } from '$lib/utils/themes';
 
 let currentTheme = ThemesName.LIGHT;
 

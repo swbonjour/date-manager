@@ -1,16 +1,13 @@
-import { Controller, Get } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 import { UserEntity } from '../entities/user.entity';
 import { GetAllUsersResponse } from '../dto/user.dto';
-import { ApiResponse } from '@nestjs/swagger';
+import { Injectable } from '@nestjs/common';
 
-@Controller('user')
-export class UserController {
+@Injectable()
+export class UserService {
   constructor(private readonly manager: EntityManager) {}
 
-  @Get('')
-  @ApiResponse({ type: GetAllUsersResponse, isArray: true })
-  async getAllUsers(): Promise<GetAllUsersResponse[]> {
+  public async getAllUsers() {
     const users = await this.manager.find(UserEntity, {
       select: { id: true, login: true },
     });

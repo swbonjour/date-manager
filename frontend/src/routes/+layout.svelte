@@ -1,24 +1,27 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { apiRequest } from '$lib/assets/api';
 	import Button from '$lib/components/button.svelte';
 	import { themeStore } from '$lib/stores/theme-store';
 	import { onMount } from 'svelte';
+	import { client } from '$lib/utils';
+	import { userStore } from '$lib/stores/user-store';
 
 	let { children } = $props();
 
 	const isAuthenticated = async () => {
-		await apiRequest('get', 'auth/who-am-i')
-			.then((res) => {
+		await client.auth
+			.authControllerWhoAmI()
+			.then(() => {
 				goto('/chat');
 			})
-			.catch((err) => {
+			.catch(() => {
 				goto('/');
 			});
 	};
 
 	onMount(async () => {
 		$themeStore.init();
+		$userStore.init();
 		await isAuthenticated();
 	});
 </script>

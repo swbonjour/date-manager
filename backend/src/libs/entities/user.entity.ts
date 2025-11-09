@@ -5,7 +5,7 @@ export class UserEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column('text')
+  @Column('text', { unique: true })
   login!: string;
 
   @Column('text')
