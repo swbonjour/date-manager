@@ -33,6 +33,8 @@ export class AuthService {
     const passwordHash = await hash(dto.password, 10);
 
     const user = this.manager.create(UserEntity, {
+      name: dto.name,
+      age: dto.age,
       login: dto.login,
       password: passwordHash,
     });

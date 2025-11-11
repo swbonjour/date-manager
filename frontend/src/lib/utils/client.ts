@@ -11,6 +11,8 @@
  */
 
 export interface AuthSignUpDto {
+  name: string;
+  age: number;
   login: string;
   password: string;
 }

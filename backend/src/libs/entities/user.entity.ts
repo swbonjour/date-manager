@@ -5,6 +5,12 @@ export class UserEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
+  @Column('text')
+  name!: string;
+
+  @Column('numeric')
+  age!: number;
+
   @Column('text', { unique: true })
   login!: string;
 

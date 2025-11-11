@@ -12,10 +12,10 @@
 		await client.auth
 			.authControllerWhoAmI()
 			.then(() => {
-				goto('/chat');
+				goto('/home');
 			})
 			.catch(() => {
-				goto('/');
+				goto('/auth');
 			});
 	};
 
