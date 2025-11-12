@@ -17,14 +17,16 @@
 
 <style>
 	.home {
+		height: 100vh;
+		width: 100wh;
 		display: flex;
 		flex-direction: column;
-		height: 100vh;
 		background-color: var(--color-secondary);
 	}
 
 	.home_inner {
-		display: flex;
 		height: 100%;
+		display: flex;
+		border-radius: 40px;
 	}
 </style>

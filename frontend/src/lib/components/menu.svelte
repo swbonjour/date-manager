@@ -50,7 +50,6 @@
 <style>
 	.menu {
 		width: 6rem;
-		height: 100%;
 		background-color: var(--color-primary);
 	}
 
