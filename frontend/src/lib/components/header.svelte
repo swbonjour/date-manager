@@ -12,7 +12,7 @@
 		justify-content: flex-start;
 		align-items: center;
 		width: 100wh;
-		height: 4rem;
+		min-height: 4rem;
 		background-color: var(--color-primary);
 	}
 

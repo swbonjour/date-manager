@@ -17,16 +17,23 @@
 
 <style>
 	.home {
-		height: 100vh;
 		width: 100wh;
+		height: 100vh;
+
 		display: flex;
 		flex-direction: column;
-		background-color: var(--color-secondary);
+
+		background-color: var(--color-primary);
+
+		overflow: hidden;
 	}
 
 	.home_inner {
+		width: 100%;
 		height: 100%;
+
 		display: flex;
+
 		border-radius: 40px;
 	}
 </style>

@@ -1,21 +1,28 @@
 <script>
+	import ScheduleTimetableRowsHeader from './schedule-timetable-rows-header.svelte';
 	import ScheduleTimetableRows from './schedule-timetable-rows.svelte';
 </script>
 
 <div class="schedule_timetable">
-	<!-- <ScheduleTimetableRows></ScheduleTimetableRows> -->
+	<ScheduleTimetableRowsHeader></ScheduleTimetableRowsHeader>
+	<ScheduleTimetableRows></ScheduleTimetableRows>
 </div>
 
 <style>
 	.schedule_timetable {
 		width: 100%;
-		height: 86%;
-		background-color: var(--color-primary);
-		border-radius: 20px;
+		flex: 8;
+		min-height: 8rem;
+
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		padding: 2rem 4rem 1rem 4rem;
-		box-sizing: border-box;
+		flex-direction: column;
+
+		background-color: var(--color-primary);
+
+		border-radius: 20px;
+
+		padding: 2rem;
 	}
 </style>

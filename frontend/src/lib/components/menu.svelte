@@ -49,7 +49,7 @@
 
 <style>
 	.menu {
-		width: 6rem;
+		min-width: 6rem;
 		background-color: var(--color-primary);
 	}
 
@@ -59,6 +59,7 @@
 		align-items: center;
 		flex-direction: column;
 		height: 50%;
+		min-height: 20rem;
 	}
 
 	.menu_icons-icon {

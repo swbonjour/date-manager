@@ -3,18 +3,31 @@
 </script>
 
 <div class="home">
-	<Schedule></Schedule>
+	<div class="home_inner">
+		<Schedule></Schedule>
+	</div>
 </div>
 
 <style>
 	.home {
 		width: 100%;
-		border-top-left-radius: 40px;
-		background-color: var(--color-secondary);
+		height: 100%;
+
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		gap: 2rem;
-		padding: 2rem;
+
+		background-color: var(--color-secondary);
+
+		border-top-left-radius: 40px;
+	}
+
+	.home_inner {
+		width: 100%;
+		height: 90%;
+
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
 </style>

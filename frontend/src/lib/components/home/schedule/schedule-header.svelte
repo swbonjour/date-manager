@@ -3,8 +3,11 @@
 <style>
 	.schedule-header {
 		width: 100%;
-		background-color: var(--color-primary);
-		border-radius: 20px;
 		flex: 1;
+		min-height: 4rem;
+
+		background-color: var(--color-primary);
+
+		border-radius: 20px;
 	}
 </style>
