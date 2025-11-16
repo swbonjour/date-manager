@@ -5,6 +5,10 @@
 	import { onMount } from 'svelte';
 	import { client } from '$lib/utils';
 	import { userStore } from '$lib/stores/user-store';
+	import dayjs from 'dayjs';
+	import '$lib/utils/dayjs-locales/ru';
+
+	dayjs.locale('ru');
 
 	let { children } = $props();
 
