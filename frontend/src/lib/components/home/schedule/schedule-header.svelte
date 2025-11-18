@@ -1,18 +1,17 @@
 <script lang="ts">
 	import dayjs from 'dayjs';
-	import Calendar from '$lib/icon/calendar.svg?raw';
+	import CalendarIcon from '$lib/icon/calendar.svg?raw';
 	import LeftArrow from '$lib/icon/left-arrow.svg?raw';
 	import RightArrow from '$lib/icon/right-arrow.svg?raw';
+	import Calendar from '$lib/components/common/calendar.svelte';
 
-	const currentDate = dayjs();
-
-	let selectedDate = $state(currentDate);
+	let currentDate = $state(dayjs());
 
 	const scrollDate = (side: 'right' | 'left') => {
 		if (side === 'right') {
-			selectedDate = selectedDate.add(1, 'd');
+			currentDate = currentDate.add(1, 'd');
 		} else {
-			selectedDate = selectedDate.subtract(1, 'd');
+			currentDate = currentDate.subtract(1, 'd');
 		}
 	};
 </script>
@@ -22,8 +21,10 @@
 		<button class="schedule-header_datepicker-left-arrow" onclick={() => scrollDate('left')}
 			>{@html LeftArrow}</button
 		>
-		<p class="schedule-header_datepicker-date">{selectedDate.format('DD MMMM YYYY')}</p>
-		<button class="schedule-header_datepicker-icon">{@html Calendar}</button>
+		<p class="schedule-header_datepicker-date">{currentDate.format('DD MMMM YYYY')}</p>
+		<button class="schedule-header_datepicker-calendar"
+			><Calendar bind:currentDate></Calendar></button
+		>
 		<button class="schedule-header_datepicker-right-arrow" onclick={() => scrollDate('right')}
 			>{@html RightArrow}</button
 		>
@@ -59,8 +60,8 @@
 		font-weight: 600;
 	}
 
-	.schedule-header_datepicker-icon {
-		margin-top: 0.2rem;
+	.schedule-header_datepicker-calendar {
+		margin-top: 0.1rem;
 		background-color: var(--color-primary);
 		border: none;
 		cursor: pointer;
