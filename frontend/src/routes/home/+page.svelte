@@ -20,11 +20,13 @@
 		background-color: var(--color-secondary);
 
 		border-top-left-radius: 40px;
+
+		padding: 2rem;
 	}
 
 	.home_inner {
 		width: 100%;
-		height: 90%;
+		height: 100%;
 
 		display: flex;
 		justify-content: center;

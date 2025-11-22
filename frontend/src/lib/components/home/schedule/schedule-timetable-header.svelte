@@ -22,9 +22,7 @@
 			>{@html LeftArrow}</button
 		>
 		<p class="schedule-header_datepicker-date">{currentDate.format('DD MMMM YYYY')}</p>
-		<button class="schedule-header_datepicker-calendar"
-			><Calendar bind:currentDate></Calendar></button
-		>
+		<Calendar bind:currentDate></Calendar>
 		<button class="schedule-header_datepicker-right-arrow" onclick={() => scrollDate('right')}
 			>{@html RightArrow}</button
 		>
@@ -34,7 +32,6 @@
 <style>
 	.schedule-header {
 		width: 100%;
-		flex: 1;
 		min-height: 4rem;
 
 		display: flex;
@@ -58,13 +55,6 @@
 	.schedule-header_datepicker-date {
 		font-size: 24px;
 		font-weight: 600;
-	}
-
-	.schedule-header_datepicker-calendar {
-		margin-top: 0.1rem;
-		background-color: var(--color-primary);
-		border: none;
-		cursor: pointer;
 	}
 
 	.schedule-header_datepicker-left-arrow,

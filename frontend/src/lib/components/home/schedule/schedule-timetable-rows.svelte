@@ -39,7 +39,7 @@
 <style>
 	.schedule_timetable-rows {
 		width: 100%;
-		height: 36rem;
+		height: 39rem;
 
 		padding-right: 2rem;
 
