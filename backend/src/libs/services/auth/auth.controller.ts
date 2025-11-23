@@ -5,9 +5,9 @@ import {
   AuthSignInResponse,
   AuthSignUpDto,
   AuthSignUpResponse,
-} from '../dto/auth.dto';
+} from '../../dto/auth.dto';
 import { AuthService } from './auth.service';
-import { Public } from '../decorators/auth-public.decorator';
+import { Public } from '../../decorators/auth-public.decorator';
 import { ApiBadRequestResponse, ApiResponse } from '@nestjs/swagger';
 
 @Controller('auth')

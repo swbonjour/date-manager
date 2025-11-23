@@ -6,8 +6,8 @@ import {
   AuthSignUpDto,
   AuthSignUpResponse,
   AuthTokenData,
-} from '../dto/auth.dto';
-import { UserEntity } from '../entities/user.entity';
+} from '../../dto/auth.dto';
+import { UserEntity } from '../../entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
 
@@ -42,7 +42,7 @@ export class AuthService {
     await this.manager.insert(UserEntity, user);
 
     const authToken = await this.jwtService.signAsync({
-      id: user.id,
+      _id: user._id,
       email: user.email,
     });
 
@@ -70,7 +70,7 @@ export class AuthService {
       );
     }
 
-    const payload: AuthTokenData = { id: user.id, email: dto.email };
+    const payload: AuthTokenData = { _id: user._id, email: dto.email };
 
     const authToken = await this.jwtService.signAsync(payload);
 

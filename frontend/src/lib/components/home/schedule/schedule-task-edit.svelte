@@ -5,10 +5,13 @@
 	import Input from '$lib/components/input.svelte';
 	import { client } from '$lib/utils';
 	import dayjs from 'dayjs';
-	import { ActivityTypeEnum } from '$lib/utils/client';
+	import { ActivityTypeEnum, type TaskDto } from '$lib/utils/client';
 	import { acitivtyTypesLoc, activityTypes } from '$lib/utils/helper';
 
-	let { isEditOpen = $bindable() } = $props();
+	let {
+		isEditOpen = $bindable(),
+		tasks = $bindable()
+	}: { isEditOpen: boolean; tasks?: TaskDto[] } = $props();
 
 	let label = $state('');
 
@@ -60,6 +63,12 @@
 			finish: dayjs(`${date} ${finishTime}`).toString(),
 			description: description
 		});
+
+		if (tasks) {
+			tasks.push(newTask);
+		}
+
+		isEditOpen = false;
 	};
 </script>
 

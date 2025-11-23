@@ -56,7 +56,7 @@ export class AuthSignInBadRequestResponse {
 
 export class AuthTokenData {
   @ApiProperty({ type: String })
-  id!: string;
+  _id!: string;
 
   @ApiProperty({ type: String })
   email!: string;

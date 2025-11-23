@@ -4,7 +4,7 @@ import { IsString } from 'class-validator';
 export class GetAllUsersResponse {
   @ApiProperty({ type: String })
   @IsString()
-  id!: string;
+  _id!: string;
 
   @ApiProperty({ type: String })
   @IsString()
