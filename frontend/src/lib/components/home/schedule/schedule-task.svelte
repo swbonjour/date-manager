@@ -1,6 +1,11 @@
 <script lang="ts">
 	import EditIcon from '$lib/icon/edit.svg?raw';
+	import type { TaskDto } from '$lib/utils/client';
+	import { acitivtyTypesLoc } from '$lib/utils/helper';
+	import dayjs from 'dayjs';
 	import ScheduleTaskEdit from './schedule-task-edit.svelte';
+
+	const props: TaskDto = $props();
 
 	let isEditOpen = $state(false);
 
@@ -11,14 +16,14 @@
 
 <div class="schedule-task">
 	<div class="schedule-task_time">
-		<p class="schedule-task_time-start">8:45</p>
+		<p class="schedule-task_time-start">{dayjs(props.start).format('HH:mm')}</p>
 		<div class="schedule-task_time-line"></div>
-		<p class="schedule-task_time-end">9:00</p>
+		<p class="schedule-task_time-end">{dayjs(props.finish).format('HH:mm')}</p>
 	</div>
 
 	<div class="schedule-task_label">
-		<div class="schedule-task_label-type">work</div>
-		<p class="schedule-task_label-text">Task task task</p>
+		<div class="schedule-task_label-type">{acitivtyTypesLoc.get(props.type)}</div>
+		<p class="schedule-task_label-text">{props.label}</p>
 	</div>
 
 	<button class="schedule-task_edit" onclick={() => openEdit()}>{@html EditIcon}</button>
@@ -71,8 +76,6 @@
 	}
 
 	.schedule-task_label-type {
-		width: 20%;
-
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -84,6 +87,8 @@
 		color: var(--color-primary);
 
 		border-radius: 48px;
+
+		padding: 0.2rem 0.4rem 0.2rem 0.4rem;
 	}
 
 	.schedule-task_label-text {

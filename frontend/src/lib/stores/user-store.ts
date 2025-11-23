@@ -3,13 +3,13 @@ import * as jwt from 'jwt-decode';
 import { setHeader } from '$lib/utils';
 
 interface AuthTokenData {
-	id: string;
-	login: string;
+	_id: string;
+	email: string;
 }
 
 export const userStore = writable({
 	id: '',
-	login: '',
+	email: '',
 	usersMap: new Map(),
 	init: () => {
 		userStore.update((u) => {
@@ -17,8 +17,8 @@ export const userStore = writable({
 
 			return {
 				...u,
-				id: authTokenData?.id || '',
-				login: authTokenData?.login || ''
+				id: authTokenData?._id || '',
+				email: authTokenData?.email || ''
 			};
 		});
 	}
@@ -31,5 +31,5 @@ const parseAuthToken = (): AuthTokenData | undefined => {
 	}
 	setHeader('Authorization', `Bearer ${authToken}`);
 	const decoded: AuthTokenData = jwt.jwtDecode(authToken);
-	return { id: decoded.id, login: decoded.login };
+	return { _id: decoded._id, email: decoded.email };
 };

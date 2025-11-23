@@ -13,7 +13,9 @@
 		min,
 		max,
 		minTextLength = 0,
-		maxTextLength = 20
+		maxTextLength = 20,
+		onInputCustom,
+		errPosition = 'bottom'
 	}: {
 		placeholder: string;
 		value: string | number;
@@ -26,6 +28,8 @@
 		max?: number;
 		minTextLength?: number;
 		maxTextLength?: number;
+		onInputCustom?: () => void;
+		errPosition?: 'bottom' | 'right';
 	} = $props();
 
 	let isInfo = $state(false);
@@ -71,8 +75,6 @@
 
 		const isCorrect = emailRegexp.test(String(value));
 
-		console.log(isCorrect);
-
 		if (!isCorrect) {
 			isInfo = true;
 			infoText = 'Email некорректный: **@**.**';
@@ -82,6 +84,12 @@
 	};
 
 	const onInput = () => {
+		if (onInputCustom) {
+			return () => {
+				onInputCustom();
+			};
+		}
+
 		switch (type) {
 			case 'number':
 				return () => {
@@ -111,7 +119,7 @@
 		maxlength={maxTextLength}
 	/>
 	{#if err}
-		<div class="err">
+		<div class={['err', errPosition === 'right' ? 'err-right' : '']}>
 			<p class="err-text">{@html Warning} {errText}</p>
 		</div>
 	{/if}
@@ -134,6 +142,11 @@
 		background-color: var(--color-secondary);
 		width: 100%;
 		border-radius: 10px;
+	}
+	.err-right {
+		right: -200%;
+		bottom: 0%;
+		width: 12rem;
 	}
 	.info-text,
 	.err-text {

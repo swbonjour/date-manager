@@ -10,6 +10,14 @@
  * ---------------------------------------------------------------
  */
 
+export enum ActivityTypeEnum {
+  WORK = "work",
+  EDUCATION = "education",
+  HOBBY = "hobby",
+  ENTERTAINMENT = "entertainment",
+  SPORT = "sport",
+}
+
 export interface AuthSignUpDto {
   name: string;
   age: number;
@@ -32,13 +40,43 @@ export interface AuthSignInResponse {
 }
 
 export interface GetAllUsersResponse {
-  id: string;
+  _id: string;
   name: string;
+}
+
+export interface TaskDto {
+  _id: string;
+  label: string;
+  type: ActivityTypeEnum;
+  /** @format date-time */
+  date: string;
+  /** @format date-time */
+  start: string;
+  /** @format date-time */
+  finish: string;
+  description?: string | null;
+}
+
+export interface TaskCreateDto {
+  label: string;
+  type: ActivityTypeEnum;
+  /** @format date-time */
+  date: string;
+  /** @format date-time */
+  start: string;
+  /** @format date-time */
+  finish: string;
+  description?: string | null;
 }
 
 export interface AuthControllerSignInParams {
   email: string;
   password: string;
+}
+
+export interface TaskControllerGetTasksByDateParams {
+  /** @format date-time */
+  date: string;
 }
 
 import type {
@@ -290,6 +328,46 @@ export class SchedlyApi<
       this.request<GetAllUsersResponse[], any>({
         path: `/user`,
         method: "GET",
+        format: "json",
+        ...params,
+      }),
+  };
+  task = {
+    /**
+     * No description
+     *
+     * @tags Task
+     * @name TaskControllerGetTasksByDate
+     * @request GET:/task/by-date
+     */
+    taskControllerGetTasksByDate: (
+      query: TaskControllerGetTasksByDateParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<TaskDto[], any>({
+        path: `/task/by-date`,
+        method: "GET",
+        query: query,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Task
+     * @name TaskControllerCreateTask
+     * @request POST:/task/create
+     */
+    taskControllerCreateTask: (
+      data: TaskCreateDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<TaskDto, any>({
+        path: `/task/create`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
         format: "json",
         ...params,
       }),

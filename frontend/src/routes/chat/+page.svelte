@@ -39,7 +39,7 @@
 			.sort((a, b) => a.create_at - b.create_at);
 	};
 
-	const getChats = async (): Promise<{ id: string; login: string }[]> => {
+	const getChats = async (): Promise<{ _id: string; login: string }[]> => {
 		return await client.user.userControllerGetAllUsers();
 	};
 

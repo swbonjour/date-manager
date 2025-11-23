@@ -4,6 +4,8 @@
 	import LeftArrow from '$lib/icon/left-arrow.svg?raw';
 	import RightArrow from '$lib/icon/right-arrow.svg?raw';
 	import Calendar from '$lib/components/common/calendar.svelte';
+	import { onMount } from 'svelte';
+	import { scheduleStore } from '$lib/stores/schedule-store';
 
 	let currentDate = $state(dayjs());
 
@@ -14,6 +16,10 @@
 			currentDate = currentDate.subtract(1, 'd');
 		}
 	};
+
+	onMount(() => {
+		scheduleStore.update(() => ({ date: currentDate }));
+	});
 </script>
 
 <div class="schedule-header">

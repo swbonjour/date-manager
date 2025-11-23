@@ -1,14 +1,32 @@
-<script>
+<script lang="ts">
 	import PlusIcon from '$lib/icon/plus.svg?raw';
+	import { onMount } from 'svelte';
 	import ScheduleTaskEdit from './schedule-task-edit.svelte';
 
 	import ScheduleTask from './schedule-task.svelte';
+	import { client } from '$lib/utils';
+	import { scheduleStore } from '$lib/stores/schedule-store';
+	import type { TaskDto } from '$lib/utils/client';
+	import { userStore } from '$lib/stores/user-store';
+
+	let tasks = $state<TaskDto[]>([]);
 
 	let isEditOpen = $state(false);
 
 	const openEdit = () => {
 		isEditOpen = !isEditOpen;
 	};
+
+	onMount(async () => {
+		const unsubscribeUserStore = userStore.subscribe(async (user) => {
+			if (user.id) {
+				tasks = await client.task.taskControllerGetTasksByDate({
+					date: $scheduleStore.date.clone().startOf('D').toString()
+				});
+				unsubscribeUserStore();
+			}
+		});
+	});
 </script>
 
 <div class="schedule-tasks">
@@ -19,10 +37,9 @@
 		>
 	</div>
 	<div class="schedule-tasks_tasks">
-		<ScheduleTask></ScheduleTask>
-		<ScheduleTask></ScheduleTask>
-		<ScheduleTask></ScheduleTask>
-		<ScheduleTask></ScheduleTask>
+		{#each tasks as task}
+			<ScheduleTask {...task}></ScheduleTask>
+		{/each}
 	</div>
 
 	{#if isEditOpen}

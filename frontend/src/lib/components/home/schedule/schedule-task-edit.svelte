@@ -3,19 +3,63 @@
 	import TimeIcon from '$lib/icon/time.svg?raw';
 	import DescriptionIcon from '$lib/icon/description.svg?raw';
 	import Input from '$lib/components/input.svelte';
+	import { client } from '$lib/utils';
+	import dayjs from 'dayjs';
+	import { ActivityTypeEnum } from '$lib/utils/client';
+	import { acitivtyTypesLoc, activityTypes } from '$lib/utils/helper';
 
 	let { isEditOpen = $bindable() } = $props();
 
 	let label = $state('');
 
+	let type = $state<ActivityTypeEnum>(ActivityTypeEnum.WORK);
+
 	let date = $state('');
 	let startTime = $state('');
 	let finishTime = $state('');
+
+	let description = $state('');
 
 	const closeEdit = (event: MouseEvent) => {
 		if (event.currentTarget === event.target) {
 			isEditOpen = !isEditOpen;
 		}
+	};
+
+	let startTimeErr = $state(false);
+
+	const validateTime = () => {
+		if (!startTime || !finishTime) {
+			startTimeErr = false;
+			return;
+		}
+
+		const splittedTimeStart = startTime.split(':').map((item) => Number(item));
+		const splittedTimeFinish = finishTime.split(':').map((item) => Number(item));
+
+		const [startHours, startMinutes] = splittedTimeStart;
+		const [finishHours, finishMinutes] = splittedTimeFinish;
+
+		if (startHours > finishHours || (startHours === finishHours && startMinutes > finishMinutes)) {
+			startTimeErr = true;
+		} else {
+			startTimeErr = false;
+		}
+	};
+
+	const selectType = (activityType: ActivityTypeEnum) => {
+		type = activityType;
+	};
+
+	const upsertTask = async () => {
+		const newTask = await client.task.taskControllerCreateTask({
+			label: label,
+			type: type,
+			date: dayjs(date).toString(),
+			start: dayjs(`${date} ${startTime}`).toString(),
+			finish: dayjs(`${date} ${finishTime}`).toString(),
+			description: description
+		});
 	};
 </script>
 
@@ -36,9 +80,21 @@
 				</p>
 			</div>
 			<div class="schedule-task_create-modal_types-categories">
-				<div class="schedule-task_create-modal_types-categories-category">
-					<p class="schedule-task_create-modal_types-categories-category-text">Работа</p>
-				</div>
+				{#each activityTypes as acitivityType}
+					<button
+						class={[
+							'schedule-task_create-modal_types-categories-category',
+							acitivityType === type
+								? 'schedule-task_create-modal_types-categories-category-selected'
+								: ''
+						]}
+						onclick={() => selectType(acitivityType)}
+					>
+						<p class="schedule-task_create-modal_types-categories-category-text">
+							{acitivtyTypesLoc.get(acitivityType)}
+						</p>
+					</button>
+				{/each}
 			</div>
 		</div>
 
@@ -46,24 +102,36 @@
 			<p class="schedule-task_create-modal_time-text">{@html TimeIcon} Время</p>
 			<div class="schedule-task_create-modal_time-date">
 				<p class="schedule-task_create-modal_time-date-text">Дата:</p>
-				<Input placeholder="" bind:value={date} type="date" />
+				<Input placeholder="" bind:value={date} type="date" onInputCustom={validateTime} />
 			</div>
 			<div class="schedule-task_create-modal_time-date-start">
 				<p class="schedule-task_create-modal_time-date-start-text">Старт:</p>
-				<Input placeholder="" bind:value={startTime} type="time" />
+				<Input
+					placeholder=""
+					bind:value={startTime}
+					type="time"
+					onInputCustom={validateTime}
+					err={startTimeErr}
+					errText="Старт не может быть больше Финиша"
+					errPosition="right"
+				/>
 			</div>
 			<div class="schedule-task_create-modal_time-date-finish">
 				<p class="schedule-task_create-modal_time-date-finish-text">Финиш:</p>
-				<Input placeholder="" bind:value={finishTime} type="time" />
+				<Input placeholder="" bind:value={finishTime} type="time" onInputCustom={validateTime} />
 			</div>
 		</div>
 
 		<div class="schedule-task_create-modal_description">
 			<p class="schedule-task_create-modal_description-text">{@html DescriptionIcon} Описание</p>
-			<textarea class="schedule-task_create-modal_description-input" maxlength="120"></textarea>
+			<textarea
+				class="schedule-task_create-modal_description-input"
+				maxlength="120"
+				bind:value={description}
+			></textarea>
 		</div>
 
-		<button class="schedule-task_create-modal-create">Создать</button>
+		<button class="schedule-task_create-modal-create" onclick={() => upsertTask()}>Создать</button>
 	</div>
 </div>
 
@@ -151,6 +219,7 @@
 		display: flex;
 		justify-content: flex-start;
 		align-items: center;
+		gap: 0.4rem;
 	}
 
 	.schedule-task_create-modal_types-categories-category {
@@ -161,6 +230,15 @@
 		color: var(--color-primary);
 
 		border-radius: 48px;
+
+		outline: none;
+		border: none;
+
+		cursor: pointer;
+	}
+
+	.schedule-task_create-modal_types-categories-category-selected {
+		border: 2px solid var(--color-neutral);
 	}
 
 	.schedule-task_create-modal_time {

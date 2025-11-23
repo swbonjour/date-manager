@@ -1,7 +1,5 @@
 <script>
-	import ScheduleTaskCreate from './schedule-task-create.svelte';
 	import ScheduleTasks from './schedule-tasks.svelte';
-	import ScheduleHeader from './schedule-timetable-header.svelte';
 	import ScheduleTimetable from './schedule-timetable.svelte';
 </script>
 
