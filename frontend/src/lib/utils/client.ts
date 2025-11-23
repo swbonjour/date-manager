@@ -13,7 +13,7 @@
 export interface AuthSignUpDto {
   name: string;
   age: number;
-  login: string;
+  email: string;
   password: string;
 }
 
@@ -23,7 +23,7 @@ export interface AuthSignUpResponse {
 
 export interface AuthSignInBadRequestResponse {
   message: string;
-  isLogin?: boolean;
+  isEmail?: boolean;
   isPassword?: boolean;
 }
 
@@ -33,11 +33,11 @@ export interface AuthSignInResponse {
 
 export interface GetAllUsersResponse {
   id: string;
-  login: string;
+  name: string;
 }
 
 export interface AuthControllerSignInParams {
-  login: string;
+  email: string;
   password: string;
 }
 

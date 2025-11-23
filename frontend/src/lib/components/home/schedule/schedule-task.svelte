@@ -1,5 +1,12 @@
 <script lang="ts">
 	import EditIcon from '$lib/icon/edit.svg?raw';
+	import ScheduleTaskEdit from './schedule-task-edit.svelte';
+
+	let isEditOpen = $state(false);
+
+	const openEdit = () => {
+		isEditOpen = !isEditOpen;
+	};
 </script>
 
 <div class="schedule-task">
@@ -14,7 +21,11 @@
 		<p class="schedule-task_label-text">Task task task</p>
 	</div>
 
-	<button class="schedule-task_edit">{@html EditIcon}</button>
+	<button class="schedule-task_edit" onclick={() => openEdit()}>{@html EditIcon}</button>
+
+	{#if isEditOpen}
+		<ScheduleTaskEdit bind:isEditOpen />
+	{/if}
 </div>
 
 <style>

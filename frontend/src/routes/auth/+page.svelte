@@ -9,7 +9,7 @@
 
 	let isSignIn = $state(true);
 
-	let login = $state('');
+	let email = $state('');
 	let password = $state('');
 	let passwordConfirm = $state('');
 
@@ -38,7 +38,7 @@
 			isError = true;
 		}
 
-		if (!login) {
+		if (!email) {
 			errEmail = true;
 			isError = true;
 		}
@@ -58,7 +58,7 @@
 		}
 
 		await client.auth
-			.authControllerSignUp({ login: login, password: password, name: name, age: Number(age) })
+			.authControllerSignUp({ email: email, password: password, name: name, age: Number(age) })
 			.then((res) => {
 				initAndRedirect(res.authToken);
 			})
@@ -67,7 +67,7 @@
 
 	const signin = async () => {
 		await client.auth
-			.authControllerSignIn({ login: login, password: password })
+			.authControllerSignIn({ email: email, password: password })
 			.then((res) => {
 				initAndRedirect(res.authToken);
 			})
@@ -76,7 +76,7 @@
 				if (!data) {
 					return;
 				}
-				if (data?.isLogin) {
+				if (data?.isEmail) {
 					errEmail = true;
 				}
 				if (data?.isPassword) {
@@ -96,7 +96,7 @@
 	};
 
 	$effect(() => {
-		login;
+		email;
 		password;
 	});
 </script>
@@ -110,28 +110,31 @@
 					<div class="auth-page_input">
 						<p class="auth-page_input-text">Электронная почта</p>
 						<Input
-							placeholder="login"
-							bind:value={login}
+							placeholder="Email"
+							bind:value={email}
 							err={errEmail}
 							errText="Введен некорректный email"
 							size="m"
+							type="email"
+							maxTextLength={40}
 						/>
 					</div>
 					<div class="auth-page_input">
 						<p class="auth-page_input-text">Пароль</p>
 						<Input
-							placeholder="password"
+							placeholder="Пароль"
 							bind:value={password}
 							err={errPassword}
-							errText="Введен некорректный email"
+							errText="Введен некорректный пароль"
 							size="m"
+							maxTextLength={40}
 						/>
 					</div>
 				{:else}
 					<div class="auth-page_input">
 						<p class="auth-page_input-text">Имя</p>
 						<Input
-							placeholder="login"
+							placeholder="Имя"
 							bind:value={name}
 							err={errName}
 							errText="Введено некорректное имя"
@@ -141,41 +144,48 @@
 					<div class="auth-page_input">
 						<p class="auth-page_input-text">Возраст</p>
 						<Input
-							placeholder="login"
+							placeholder="Возраст"
 							bind:value={age}
 							err={errAge}
 							errText="Введен некорректный возраст"
 							size="s"
+							type="number"
+							min={0}
+							max={130}
 						/>
 					</div>
 					<div class="auth-page_input">
 						<p class="auth-page_input-text">Электронная почта</p>
 						<Input
-							placeholder="login"
-							bind:value={login}
+							placeholder="Email"
+							bind:value={email}
 							err={errEmail}
 							errText="Введен некорректный email"
 							size="s"
+							type="email"
+							maxTextLength={40}
 						/>
 					</div>
 					<div class="auth-page_input">
 						<p class="auth-page_input-text">Пароль</p>
 						<Input
-							placeholder="password"
+							placeholder="Пароль"
 							bind:value={password}
 							err={errPassword}
 							errText="Введен некорректный пароль"
 							size="s"
+							maxTextLength={40}
 						/>
 					</div>
 					<div class="auth-page_input">
 						<p class="auth-page_input-text">Подтверждение пароля</p>
 						<Input
-							placeholder="password"
+							placeholder="Подтверждение пароля"
 							bind:value={passwordConfirm}
 							err={errPasswordConfirm}
 							errText="Пароли не совпадают"
 							size="s"
+							maxTextLength={40}
 						/>
 					</div>
 				{/if}
@@ -223,6 +233,8 @@
 		height: 100vh;
 		background-color: var(--color-secondary);
 		color: var(--color-neutral);
+
+		overflow: hidden;
 	}
 
 	.auth-page_form {

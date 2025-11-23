@@ -59,6 +59,10 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
+
+		background-color: var(--color-secondary);
+
+		border-radius: 8px;
 	}
 
 	.schedule_timetable-row-line {

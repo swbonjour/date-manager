@@ -1,13 +1,22 @@
 <script>
 	import PlusIcon from '$lib/icon/plus.svg?raw';
+	import ScheduleTaskEdit from './schedule-task-edit.svelte';
 
 	import ScheduleTask from './schedule-task.svelte';
+
+	let isEditOpen = $state(false);
+
+	const openEdit = () => {
+		isEditOpen = !isEditOpen;
+	};
 </script>
 
 <div class="schedule-tasks">
 	<div class="schedule-tasks_header">
 		<p class="schedule-tasks_header-text">Мои задачи</p>
-		<button class="schedule-tasks_header-create">Создать {@html PlusIcon}</button>
+		<button class="schedule-tasks_header-create" onclick={() => openEdit()}
+			>Создать {@html PlusIcon}</button
+		>
 	</div>
 	<div class="schedule-tasks_tasks">
 		<ScheduleTask></ScheduleTask>
@@ -15,6 +24,10 @@
 		<ScheduleTask></ScheduleTask>
 		<ScheduleTask></ScheduleTask>
 	</div>
+
+	{#if isEditOpen}
+		<ScheduleTaskEdit bind:isEditOpen />
+	{/if}
 </div>
 
 <style>
