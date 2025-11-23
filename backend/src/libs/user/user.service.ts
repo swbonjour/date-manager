@@ -9,12 +9,12 @@ export class UserService {
 
   public async getAllUsers() {
     const users = await this.manager.find(UserEntity, {
-      select: { id: true, login: true },
+      select: { id: true, name: true },
     });
 
     return users.map(
       (item) =>
-        ({ id: item.id, login: item.login }) satisfies GetAllUsersResponse,
+        ({ id: item.id, name: item.name }) satisfies GetAllUsersResponse,
     );
   }
 }

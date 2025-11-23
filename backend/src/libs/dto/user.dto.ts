@@ -8,5 +8,5 @@ export class GetAllUsersResponse {
 
   @ApiProperty({ type: String })
   @IsString()
-  login!: string;
+  name!: string;
 }

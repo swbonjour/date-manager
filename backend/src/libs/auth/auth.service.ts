@@ -20,7 +20,7 @@ export class AuthService {
 
   public async signUp(dto: AuthSignUpDto): Promise<AuthSignUpResponse> {
     const existingUser = await this.manager.findOneBy(UserEntity, {
-      login: dto.login,
+      email: dto.email,
     });
 
     if (existingUser) {
@@ -35,7 +35,7 @@ export class AuthService {
     const user = this.manager.create(UserEntity, {
       name: dto.name,
       age: dto.age,
-      login: dto.login,
+      email: dto.email,
       password: passwordHash,
     });
 
@@ -43,7 +43,7 @@ export class AuthService {
 
     const authToken = await this.jwtService.signAsync({
       id: user.id,
-      login: user.login,
+      email: user.email,
     });
 
     return { authToken };
@@ -51,12 +51,12 @@ export class AuthService {
 
   public async signIn(dto: AuthSignInDto): Promise<AuthSignInResponse> {
     const user = await this.manager.findOne(UserEntity, {
-      where: { login: dto.login },
+      where: { email: dto.email },
     });
 
     if (!user) {
       throw new HttpException(
-        { message: 'User is not found', isLogin: true },
+        { message: 'User is not found', isEmail: true },
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -70,7 +70,7 @@ export class AuthService {
       );
     }
 
-    const payload: AuthTokenData = { id: user.id, login: dto.login };
+    const payload: AuthTokenData = { id: user.id, email: dto.email };
 
     const authToken = await this.jwtService.signAsync(payload);
 

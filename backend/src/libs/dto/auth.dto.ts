@@ -12,7 +12,7 @@ export class AuthSignUpDto {
 
   @ApiProperty({ type: String })
   @IsString()
-  login!: string;
+  email!: string;
 
   @ApiProperty({ type: String })
   @IsString()
@@ -28,7 +28,7 @@ export class AuthSignUpResponse {
 export class AuthSignInDto {
   @ApiProperty({ type: String })
   @IsString()
-  login!: string;
+  email!: string;
 
   @ApiProperty({ type: String })
   @IsString()
@@ -47,7 +47,7 @@ export class AuthSignInBadRequestResponse {
 
   @ApiPropertyOptional({ type: Boolean })
   @IsOptional()
-  isLogin?: boolean;
+  isEmail?: boolean;
 
   @ApiPropertyOptional({ type: Boolean })
   @IsOptional()
@@ -59,5 +59,5 @@ export class AuthTokenData {
   id!: string;
 
   @ApiProperty({ type: String })
-  login!: string;
+  email!: string;
 }

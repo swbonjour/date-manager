@@ -12,7 +12,7 @@ export class UserEntity {
   age!: number;
 
   @Column('text', { unique: true })
-  login!: string;
+  email!: string;
 
   @Column('text')
   password!: string;
