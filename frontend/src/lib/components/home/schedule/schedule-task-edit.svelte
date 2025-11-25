@@ -4,9 +4,9 @@
 	import DescriptionIcon from '$lib/icon/description.svg?raw';
 	import Input from '$lib/components/input.svelte';
 	import { client } from '$lib/utils';
-	import dayjs from 'dayjs';
 	import { ActivityTypeEnum, type TaskDto } from '$lib/utils/client';
 	import { acitivtyTypesLoc, activityTypes } from '$lib/utils/helper';
+	import { DateTime } from 'luxon';
 
 	let {
 		isEditOpen = $bindable(),
@@ -58,9 +58,9 @@
 		const newTask = await client.task.taskControllerCreateTask({
 			label: label,
 			type: type,
-			date: dayjs(date).toString(),
-			start: dayjs(`${date} ${startTime}`).toString(),
-			finish: dayjs(`${date} ${finishTime}`).toString(),
+			date: DateTime.fromISO(date).toISO()!,
+			start: DateTime.fromISO(`${date}T${startTime}`).toISO()!,
+			finish: DateTime.fromISO(`${date}T${finishTime}`).toISO()!,
 			description: description
 		});
 

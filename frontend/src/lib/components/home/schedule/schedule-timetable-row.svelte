@@ -1,29 +1,58 @@
 <script lang="ts">
-	const { time }: { time: string } = $props();
+	import type { TaskDto } from '$lib/utils/client';
+	import { DateTime } from 'luxon';
 
-	const rowData: { length: number; color: string }[] = $state([]);
+	const { time, rowData }: { time: string; rowData: TaskDto[] } = $props();
 
-	const randomLines = () => {
-		const colors = ['#8E80F9', '#7DC1FE', '#7BFFA2', '#FF7DA9', '#F2F2F2'];
+	const rowHour = Number(time.split(':')[0]);
 
-		for (let i = 0; i < Math.floor(Math.random() * 5); i++) {
-			rowData.push({
-				length: Math.floor(Math.random() * 100),
-				color: colors[Math.floor(Math.random() * colors.length - 1)]
-			});
-		}
-	};
+	const calculatedRows = $derived(() => {
+		const sortedRows = rowData.sort(
+			(a, b) => DateTime.fromISO(a.start).valueOf() - DateTime.fromISO(b.start).valueOf()
+		);
 
-	randomLines();
+		return sortedRows.map((row) => {
+			const start = DateTime.fromISO(row.start);
+			const finish = DateTime.fromISO(row.finish);
+
+			let minutesInHour: number;
+			let percent: number;
+			let percentagePaddingLeft: number;
+			if (finish.hour === rowHour && start.hour === rowHour) {
+				minutesInHour = finish.diff(start, 'minutes').minutes;
+				percent = (minutesInHour / 60) * 100;
+			} else if (finish.hour === rowHour) {
+				minutesInHour = finish.minute;
+				percent = (minutesInHour / 60) * 100;
+			} else if (start.hour === rowHour) {
+				minutesInHour = Math.abs(start.minute - 60);
+				percent = (minutesInHour / 60) * 100;
+			} else {
+				percent = 100;
+			}
+
+			if (finish.hour === rowHour && start.hour === rowHour) {
+				percentagePaddingLeft = (start.minute / 60) * 100;
+			} else if (finish.hour === rowHour) {
+				percentagePaddingLeft = 0;
+			} else if (start.hour === rowHour) {
+				percentagePaddingLeft = ((60 - Math.abs(start.minute - 60)) / 60) * 100;
+			} else {
+				percentagePaddingLeft = 0;
+			}
+
+			return { task: row, percentage: percent, percentagePaddingLeft: percentagePaddingLeft };
+		});
+	});
 </script>
 
 <div class="schedule_timetable-row">
 	<p class="schedule_timetable-row-time">{time}</p>
 	<div class="schedule_timetable-row-wrap">
-		{#each rowData as row}
+		{#each calculatedRows() as row}
 			<div
 				class="schedule_timetable-row-line"
-				style="width: {row.length}%;background-color: {row.color};"
+				style="width: {row.percentage}%; background-color: black; left: {row.percentagePaddingLeft}%;"
 			></div>
 		{/each}
 	</div>
@@ -56,18 +85,20 @@
 		width: 100%;
 		height: 100%;
 
-		display: flex;
-		justify-content: center;
-		align-items: center;
-
 		background-color: var(--color-secondary);
 
 		border-radius: 8px;
+
+		position: relative;
 	}
 
 	.schedule_timetable-row-line {
 		height: 100%;
 		width: 100%;
+
+		display: inline-block;
+
+		position: absolute;
 
 		background-color: var(--color-secondary);
 		border-radius: 8px;

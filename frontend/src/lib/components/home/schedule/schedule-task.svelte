@@ -2,8 +2,8 @@
 	import EditIcon from '$lib/icon/edit.svg?raw';
 	import type { TaskDto } from '$lib/utils/client';
 	import { acitivtyTypesLoc } from '$lib/utils/helper';
-	import dayjs from 'dayjs';
 	import ScheduleTaskEdit from './schedule-task-edit.svelte';
+	import { DateTime } from 'luxon';
 
 	const props: TaskDto = $props();
 
@@ -16,9 +16,9 @@
 
 <div class="schedule-task">
 	<div class="schedule-task_time">
-		<p class="schedule-task_time-start">{dayjs(props.start).format('HH:mm')}</p>
+		<p class="schedule-task_time-start">{DateTime.fromISO(props.start).toFormat('HH:mm')}</p>
 		<div class="schedule-task_time-line"></div>
-		<p class="schedule-task_time-end">{dayjs(props.finish).format('HH:mm')}</p>
+		<p class="schedule-task_time-end">{DateTime.fromISO(props.finish).toFormat('HH:mm')}</p>
 	</div>
 
 	<div class="schedule-task_label">

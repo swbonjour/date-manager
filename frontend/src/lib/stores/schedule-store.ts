@@ -1,6 +1,6 @@
-import dayjs from 'dayjs';
+import { DateTime } from 'luxon';
 import { writable } from 'svelte/store';
 
 export const scheduleStore = writable({
-	date: dayjs()
+	date: DateTime.now()
 });

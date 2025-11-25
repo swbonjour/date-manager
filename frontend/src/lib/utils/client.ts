@@ -48,11 +48,8 @@ export interface TaskDto {
   _id: string;
   label: string;
   type: ActivityTypeEnum;
-  /** @format date-time */
   date: string;
-  /** @format date-time */
   start: string;
-  /** @format date-time */
   finish: string;
   description?: string | null;
 }
@@ -60,11 +57,8 @@ export interface TaskDto {
 export interface TaskCreateDto {
   label: string;
   type: ActivityTypeEnum;
-  /** @format date-time */
   date: string;
-  /** @format date-time */
   start: string;
-  /** @format date-time */
   finish: string;
   description?: string | null;
 }
@@ -75,7 +69,6 @@ export interface AuthControllerSignInParams {
 }
 
 export interface TaskControllerGetTasksByDateParams {
-  /** @format date-time */
   date: string;
 }
 

@@ -3,17 +3,17 @@
 	import RightArrow from '$lib/icon/right-arrow.svg?raw';
 	import CalendarIcon from '$lib/icon/calendar.svg?raw';
 	import { capitalizeFirstLetter } from '$lib/utils/helper';
-	import dayjs from 'dayjs';
+	import { DateTime } from 'luxon';
 
-	let { currentDate = $bindable() }: { currentDate: dayjs.Dayjs } = $props();
+	let { currentDate = $bindable() }: { currentDate: DateTime } = $props();
 
 	let isOpen = $state(false);
 
-	let currentMonth = $state(currentDate.startOf('M'));
+	let currentMonth = $state(currentDate.startOf('month'));
 
 	const getMonthDays = () => {
 		return Array.from(
-			Array(dayjs(currentMonth).daysInMonth())
+			Array(currentMonth.daysInMonth)
 				.keys()
 				.map((item) => item + 1)
 		);
@@ -23,15 +23,15 @@
 
 	const scrollMonth = (side: 'left' | 'right') => {
 		if (side === 'left') {
-			currentMonth = currentMonth.subtract(1, 'M');
+			currentMonth = currentMonth.minus({ month: 1 });
 		} else {
-			currentMonth = currentMonth.add(1, 'M');
+			currentMonth = currentMonth.plus({ month: 1 });
 		}
 		daysInCurrentMonth = getMonthDays();
 	};
 
-	const selectDate = (date: dayjs.Dayjs) => {
-		currentDate = date;
+	const selectDate = (day: number) => {
+		currentDate = currentDate.set({ day: day, month: currentMonth.month });
 	};
 
 	const openCalendar = () => {
@@ -48,7 +48,7 @@
 			<div class="calendar_header">
 				<div class="calendar_header-select">
 					<div class="calendar_header-select-date">
-						{capitalizeFirstLetter(currentMonth.format('MMMM YYYY'))}
+						{capitalizeFirstLetter(currentMonth.toFormat('LLLL y'))}
 					</div>
 
 					<div class="calendar_header-select-date-scroll">
@@ -76,18 +76,15 @@
 
 			<div class="calendar_days">
 				{#each daysInCurrentMonth as day}
-					{#if day === currentMonth.date()}
+					{#if day === currentMonth.day}
 						<button
-							class={['calendar_days-day', `calendar_days-day-start-${currentMonth.day()}`]}
-							onclick={() => selectDate(currentMonth.clone().date(day))}
+							class={['calendar_days-day', `calendar_days-day-start-${currentMonth.day}`]}
+							onclick={() => selectDate(day)}
 						>
 							{day}
 						</button>
 					{:else}
-						<button
-							class="calendar_days-day"
-							onclick={() => selectDate(currentMonth.clone().date(day))}>{day}</button
-						>
+						<button class="calendar_days-day" onclick={() => selectDate(day)}>{day}</button>
 					{/if}
 				{/each}
 			</div>

@@ -8,7 +8,6 @@
 	import { scheduleStore } from '$lib/stores/schedule-store';
 	import type { TaskDto } from '$lib/utils/client';
 	import { userStore } from '$lib/stores/user-store';
-	import dayjs from 'dayjs';
 
 	let tasks = $state<TaskDto[]>([]);
 
@@ -20,15 +19,9 @@
 
 	onMount(async () => {
 		const unsubscribeUserStore = userStore.subscribe(async (user) => {
-			console.log(
-				// $scheduleStore.date.clone().startOf('D').toString(),
-				// $scheduleStore.date.toString(),
-				dayjs().toString(),
-				dayjs().utcOffset()
-			);
 			if (user.id) {
 				tasks = await client.task.taskControllerGetTasksByDate({
-					date: $scheduleStore.date.clone().startOf('D').toString()
+					date: $scheduleStore.date.toISO()
 				});
 				unsubscribeUserStore();
 			}
