@@ -7,21 +7,28 @@
 	import { ActivityTypeEnum, type TaskDto } from '$lib/utils/client';
 	import { acitivtyTypesLoc, activityTypes } from '$lib/utils/helper';
 	import { DateTime } from 'luxon';
+	import { taskStore } from '$lib/stores/task-store';
 
-	let {
-		isEditOpen = $bindable(),
-		tasks = $bindable()
-	}: { isEditOpen: boolean; tasks?: TaskDto[] } = $props();
+	let { isEditOpen = $bindable(), task = $bindable() }: { isEditOpen: boolean; task?: TaskDto } =
+		$props();
 
-	let label = $state('');
+	let label = $state(task ? task.label : '');
 
-	let type = $state<ActivityTypeEnum>(ActivityTypeEnum.WORK);
+	let type = $state<ActivityTypeEnum>(task ? task.type : ActivityTypeEnum.WORK);
 
-	let date = $state('');
-	let startTime = $state('');
-	let finishTime = $state('');
+	let date = $state(
+		task ? DateTime.fromISO(task.date).toFormat('y-MM-dd') : DateTime.now().toFormat('y-MM-dd')
+	);
+	let startTime = $state(
+		task ? DateTime.fromISO(task.start).toFormat('HH:mm') : DateTime.now().toFormat('HH:mm')
+	);
+	let finishTime = $state(
+		task
+			? DateTime.fromISO(task.finish).toFormat('HH:mm')
+			: DateTime.now().plus({ hour: 1 }).toFormat('HH:mm')
+	);
 
-	let description = $state('');
+	let description = $state(task ? task.description : '');
 
 	const closeEdit = (event: MouseEvent) => {
 		if (event.currentTarget === event.target) {
@@ -55,17 +62,43 @@
 	};
 
 	const upsertTask = async () => {
-		const newTask = await client.task.taskControllerCreateTask({
-			label: label,
-			type: type,
-			date: DateTime.fromISO(date).toISO()!,
-			start: DateTime.fromISO(`${date}T${startTime}`).toISO()!,
-			finish: DateTime.fromISO(`${date}T${finishTime}`).toISO()!,
-			description: description
-		});
+		if (!task) {
+			const newTask = await client.task.taskControllerCreateTask({
+				label: label,
+				type: type,
+				date: DateTime.fromISO(date).toISO()!,
+				start: DateTime.fromISO(`${date}T${startTime}`).toISO()!,
+				finish: DateTime.fromISO(`${date}T${finishTime}`).toISO()!,
+				description: description
+			});
 
-		if (tasks) {
-			tasks.push(newTask);
+			taskStore.update((t) => {
+				return {
+					...t,
+					tasks: [...t.tasks, newTask]
+				};
+			});
+		} else {
+			const updatedTask = await client.task.taskControllerUpdateTask({
+				_id: task._id,
+				label: label,
+				type: type,
+				date: DateTime.fromISO(date).toISO()!,
+				start: DateTime.fromISO(`${date}T${startTime}`).toISO()!,
+				finish: DateTime.fromISO(`${date}T${finishTime}`).toISO()!,
+				description: description
+			});
+
+			taskStore.update((t) => {
+				t.tasks.splice(
+					t.tasks.findIndex((item) => item._id === task._id),
+					1
+				);
+				return {
+					...t,
+					tasks: [...t.tasks, updatedTask]
+				};
+			});
 		}
 
 		isEditOpen = false;
@@ -89,18 +122,19 @@
 				</p>
 			</div>
 			<div class="schedule-task_create-modal_types-categories">
-				{#each activityTypes as acitivityType}
+				{#each activityTypes as activityType}
 					<button
 						class={[
 							'schedule-task_create-modal_types-categories-category',
-							acitivityType === type
+							activityType === type
 								? 'schedule-task_create-modal_types-categories-category-selected'
 								: ''
 						]}
-						onclick={() => selectType(acitivityType)}
+						style="background-color: var(--color-{activityType})"
+						onclick={() => selectType(activityType)}
 					>
 						<p class="schedule-task_create-modal_types-categories-category-text">
-							{acitivtyTypesLoc.get(acitivityType)}
+							{acitivtyTypesLoc.get(activityType)}
 						</p>
 					</button>
 				{/each}
@@ -140,7 +174,9 @@
 			></textarea>
 		</div>
 
-		<button class="schedule-task_create-modal-create" onclick={() => upsertTask()}>Создать</button>
+		<button class="schedule-task_create-modal-create" onclick={() => upsertTask()}
+			>{task ? 'Обновить' : 'Создать'}</button
+		>
 	</div>
 </div>
 
@@ -218,8 +254,11 @@
 	}
 
 	.schedule-task_create-modal_types-header-text {
+		fill: var(--color-neutral);
+
 		font-size: 24px;
 		font-weight: 600;
+		color: var(--color-neutral);
 	}
 
 	.schedule-task_create-modal_types-categories {
@@ -236,7 +275,7 @@
 
 		padding: 0.2rem 1rem 0.2rem 1rem;
 
-		color: var(--color-primary);
+		color: #ffffff;
 
 		border-radius: 48px;
 
@@ -262,8 +301,11 @@
 	}
 
 	.schedule-task_create-modal_time-text {
+		fill: var(--color-neutral);
+
 		font-size: 24px;
 		font-weight: 600;
+		color: var(--color-neutral);
 	}
 
 	.schedule-task_create-modal_time-date,
@@ -282,6 +324,7 @@
 	.schedule-task_create-modal_time-date-finish-text {
 		font-size: 18px;
 		font-weight: 600;
+		color: var(--color-neutral);
 	}
 
 	.schedule-task_create-modal_description {
@@ -296,8 +339,11 @@
 	}
 
 	.schedule-task_create-modal_description-text {
+		fill: var(--color-neutral);
+
 		font-size: 24px;
 		font-weight: 600;
+		color: var(--color-neutral);
 	}
 
 	.schedule-task_create-modal_description-input {
@@ -333,7 +379,7 @@
 
 		font-size: 24px;
 		font-weight: 600;
-		color: var(--color-primary);
+		color: #ffffff;
 
 		border-radius: 21px;
 

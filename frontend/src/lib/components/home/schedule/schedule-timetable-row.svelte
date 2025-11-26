@@ -52,7 +52,8 @@
 		{#each calculatedRows() as row}
 			<div
 				class="schedule_timetable-row-line"
-				style="width: {row.percentage}%; background-color: black; left: {row.percentagePaddingLeft}%;"
+				style="width: {row.percentage}%; background-color: var(--color-{row.task
+					.type}); left: {row.percentagePaddingLeft}%;"
 			></div>
 		{/each}
 	</div>

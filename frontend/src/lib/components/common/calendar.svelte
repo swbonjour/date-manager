@@ -4,6 +4,7 @@
 	import CalendarIcon from '$lib/icon/calendar.svg?raw';
 	import { capitalizeFirstLetter } from '$lib/utils/helper';
 	import { DateTime } from 'luxon';
+	import { taskStore } from '$lib/stores/task-store';
 
 	let { currentDate = $bindable() }: { currentDate: DateTime } = $props();
 
@@ -30,8 +31,10 @@
 		daysInCurrentMonth = getMonthDays();
 	};
 
-	const selectDate = (day: number) => {
+	const selectDate = async (day: number) => {
 		currentDate = currentDate.set({ day: day, month: currentMonth.month });
+
+		await $taskStore.init(currentDate.toISO()!);
 	};
 
 	const openCalendar = () => {
@@ -104,6 +107,7 @@
 
 	.calendar_btn {
 		background-color: var(--color-primary);
+		fill: var(--color-neutral);
 
 		outline: none;
 		border: none;
@@ -123,6 +127,8 @@
 		position: absolute;
 
 		top: 2rem;
+
+		box-shadow: 0px 4px 12px 0px var(--color-shadow);
 	}
 
 	.calendar_header {
@@ -189,6 +195,10 @@
 		padding-bottom: 1rem;
 	}
 
+	.calendar_header-weekdays-day {
+		color: var(--color-neutral);
+	}
+
 	.calendar_days {
 		display: grid;
 		grid-template-columns: repeat(7, 3rem);
@@ -208,6 +218,8 @@
 
 		outline: none;
 		border: none;
+
+		color: var(--color-neutral);
 	}
 
 	.calendar_days-day-start-1 {

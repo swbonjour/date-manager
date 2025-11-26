@@ -63,6 +63,16 @@ export interface TaskCreateDto {
   description?: string | null;
 }
 
+export interface TaskUpdateDto {
+  _id: string;
+  label: string;
+  type: ActivityTypeEnum;
+  date: string;
+  start: string;
+  finish: string;
+  description?: string | null;
+}
+
 export interface AuthControllerSignInParams {
   email: string;
   password: string;
@@ -70,6 +80,10 @@ export interface AuthControllerSignInParams {
 
 export interface TaskControllerGetTasksByDateParams {
   date: string;
+}
+
+export interface TaskControllerDeleteTaskParams {
+  id: string;
 }
 
 import type {
@@ -362,6 +376,43 @@ export class SchedlyApi<
         body: data,
         type: ContentType.Json,
         format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Task
+     * @name TaskControllerUpdateTask
+     * @request PATCH:/task/update
+     */
+    taskControllerUpdateTask: (
+      data: TaskUpdateDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<TaskDto, any>({
+        path: `/task/update`,
+        method: "PATCH",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Task
+     * @name TaskControllerDeleteTask
+     * @request DELETE:/task/delete/{_id}
+     */
+    taskControllerDeleteTask: (
+      { id, ...query }: TaskControllerDeleteTaskParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/task/delete/${id}`,
+        method: "DELETE",
         ...params,
       }),
   };

@@ -6,6 +6,7 @@
 	import type { TaskDto } from '$lib/utils/client';
 	import { DateTime } from 'luxon';
 	import { userStore } from '$lib/stores/user-store';
+	import { taskStore } from '$lib/stores/task-store';
 
 	const rows = $state([
 		{ time: '0:00' },
@@ -34,50 +35,48 @@
 		{ time: '23:00' }
 	]);
 
-	let rowsData = $state<TaskDto[]>([]);
-
 	let rowsDataByHours = $state<Map<string, TaskDto[]>>(new Map());
 
 	onMount(async () => {
 		const unsubscribeUserStore = userStore.subscribe(async (user) => {
 			if (user.id) {
-				rowsData = await client.task.taskControllerGetTasksByDate({
-					date: $scheduleStore.date.toISO()
-				});
-
-				const newRowsDataByHours: Map<string, TaskDto[]> = new Map();
-
-				for (const rowData of rowsData) {
-					const rowDataStartHour = DateTime.fromISO(rowData.start).hour;
-					const rowDataFinishHour = DateTime.fromISO(rowData.finish).hour;
-
-					const rowDataHoursDiff = DateTime.fromISO(rowData.finish).diff(
-						DateTime.fromISO(rowData.start),
-						'hours'
-					).hours;
-
-					console.log(
-						rowDataStartHour,
-						DateTime.fromISO(rowData.start).toFormat('dd MMM y hh mm'),
-						rowData.start
-					);
-
-					for (let hour = rowDataStartHour; hour <= rowDataStartHour + rowDataHoursDiff; hour++) {
-						const existingRowsData = newRowsDataByHours.get(String(hour));
-
-						if (!existingRowsData) {
-							newRowsDataByHours.set(String(hour), [rowData]);
-						} else {
-							newRowsDataByHours.set(String(hour), [...existingRowsData, rowData]);
-						}
-					}
-				}
-
-				rowsDataByHours = newRowsDataByHours;
+				await $taskStore.init($scheduleStore.date.toISO());
 
 				unsubscribeUserStore();
 			}
 		});
+	});
+
+	taskStore.subscribe(async (t) => {
+		const newRowsDataByHours: Map<string, TaskDto[]> = new Map();
+
+		for (const rowData of t.tasks) {
+			const rowDataStartHour = DateTime.fromISO(rowData.start).hour;
+			const rowDataFinishHour = DateTime.fromISO(rowData.finish).hour;
+
+			let rowDataHoursDiff = Math.ceil(
+				DateTime.fromISO(rowData.finish).diff(DateTime.fromISO(rowData.start), 'hours').hours
+			);
+
+			if (
+				DateTime.fromISO(rowData.start).hour !== DateTime.fromISO(rowData.finish).hour &&
+				rowDataHoursDiff === 1
+			) {
+				rowDataHoursDiff++;
+			}
+
+			for (let hour = rowDataStartHour; hour < rowDataStartHour + rowDataHoursDiff; hour++) {
+				const existingRowsData = newRowsDataByHours.get(String(hour));
+
+				if (!existingRowsData) {
+					newRowsDataByHours.set(String(hour), [rowData]);
+				} else {
+					newRowsDataByHours.set(String(hour), [...existingRowsData, rowData]);
+				}
+			}
+		}
+
+		rowsDataByHours = newRowsDataByHours;
 	});
 </script>
 

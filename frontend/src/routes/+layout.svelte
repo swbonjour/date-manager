@@ -30,7 +30,7 @@
 
 <svelte:head></svelte:head>
 
-<div style="position: absolute; right: 2rem; bottom: 2rem;">
+<div style="position: absolute; right: 4rem; bottom: 4rem; color: var(--color-neutral)">
 	<Button label="Switch colors" onclick={$themeStore.toggle} size="m"></Button>
 </div>
 

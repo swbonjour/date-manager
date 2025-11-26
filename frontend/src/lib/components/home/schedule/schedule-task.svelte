@@ -4,13 +4,31 @@
 	import { acitivtyTypesLoc } from '$lib/utils/helper';
 	import ScheduleTaskEdit from './schedule-task-edit.svelte';
 	import { DateTime } from 'luxon';
+	import TrashIcon from '$lib/icon/trash.svg?raw';
+	import { client } from '$lib/utils';
+	import { taskStore } from '$lib/stores/task-store';
 
-	const props: TaskDto = $props();
+	let props: TaskDto = $props();
 
 	let isEditOpen = $state(false);
 
 	const openEdit = () => {
 		isEditOpen = !isEditOpen;
+	};
+
+	const deleteTask = async () => {
+		await client.task.taskControllerDeleteTask({ id: props._id });
+
+		taskStore.update((t) => {
+			t.tasks.splice(
+				t.tasks.findIndex((item) => item._id === props._id),
+				1
+			);
+			return {
+				...t,
+				tasks: t.tasks
+			};
+		});
 	};
 </script>
 
@@ -22,14 +40,17 @@
 	</div>
 
 	<div class="schedule-task_label">
-		<div class="schedule-task_label-type">{acitivtyTypesLoc.get(props.type)}</div>
+		<div class="schedule-task_label-type" style="background-color: var(--color-{props.type})">
+			{acitivtyTypesLoc.get(props.type)}
+		</div>
 		<p class="schedule-task_label-text">{props.label}</p>
 	</div>
 
 	<button class="schedule-task_edit" onclick={() => openEdit()}>{@html EditIcon}</button>
+	<button class="schedule-task_delete" onclick={() => deleteTask()}>{@html TrashIcon}</button>
 
 	{#if isEditOpen}
-		<ScheduleTaskEdit bind:isEditOpen />
+		<ScheduleTaskEdit bind:isEditOpen bind:task={props} />
 	{/if}
 </div>
 
@@ -89,14 +110,28 @@
 		border-radius: 48px;
 
 		padding: 0.2rem 0.4rem 0.2rem 0.4rem;
+
+		color: #ffffff;
 	}
 
 	.schedule-task_label-text {
 		font-size: 20px;
 		font-weight: 600;
+
+		color: var(--color-neutral);
 	}
 
 	.schedule-task_edit {
+		background-color: var(--color-primary);
+		fill: var(--color-accent);
+
+		outline: none;
+		border: none;
+
+		cursor: pointer;
+	}
+
+	.schedule-task_delete {
 		background-color: var(--color-primary);
 		fill: var(--color-accent);
 

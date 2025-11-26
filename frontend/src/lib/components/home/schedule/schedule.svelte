@@ -1,12 +1,11 @@
 <script>
+	import ScheduleTaskStat from './schedule-task-stat.svelte';
 	import ScheduleTasks from './schedule-tasks.svelte';
 	import ScheduleTimetable from './schedule-timetable.svelte';
 </script>
 
 <div class="schedule">
-	<div
-		style="width: 20%; height: 20%; background-color: var(--color-primary); border-radius: 20px;"
-	></div>
+	<ScheduleTaskStat></ScheduleTaskStat>
 
 	<ScheduleTimetable></ScheduleTimetable>
 

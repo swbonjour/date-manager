@@ -1,8 +1,14 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { IsDate, IsEnum, IsOptional, IsString, IsUUID } from 'class-validator';
+import {
+  IsDateString,
+  IsEnum,
+  IsISO8601,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 import { ActivityTypeEnum } from './activity-type.enum';
-import { ApiEnumProperty } from 'src/config/const-swagger';
+import { ApiEnumProperty } from 'src/config/conf-swagger';
 
 export class TaskDto {
   @ApiProperty({ type: String })
@@ -19,20 +25,20 @@ export class TaskDto {
   @IsEnum(ActivityTypeEnum)
   type!: ActivityTypeEnum;
 
-  @ApiProperty({ type: Date, nullable: false })
-  @IsDate()
-  @Type(() => Date)
-  date!: Date;
+  @ApiProperty({ type: String, nullable: false })
+  @IsDateString()
+  @IsISO8601()
+  date!: string;
 
-  @ApiProperty({ type: Date, nullable: false })
-  @IsDate()
-  @Type(() => Date)
-  start!: Date;
+  @ApiProperty({ type: String, nullable: false })
+  @IsDateString()
+  @IsISO8601()
+  start!: string;
 
-  @ApiProperty({ type: Date, nullable: false })
-  @IsDate()
-  @Type(() => Date)
-  finish!: Date;
+  @ApiProperty({ type: String, nullable: false })
+  @IsDateString()
+  @IsISO8601()
+  finish!: string;
 
   @ApiPropertyOptional({ type: String, nullable: true })
   @IsString()
@@ -41,10 +47,10 @@ export class TaskDto {
 }
 
 export class TaskGetByDateDto {
-  @ApiProperty({ type: Date, nullable: false })
-  @IsDate()
-  @Type(() => Date)
-  date!: Date;
+  @ApiProperty({ type: String, nullable: false })
+  @IsDateString()
+  @IsISO8601()
+  date!: string;
 
   user_id!: string;
 }
@@ -58,20 +64,20 @@ export class TaskCreateDto {
   @IsEnum(ActivityTypeEnum)
   type!: ActivityTypeEnum;
 
-  @ApiProperty({ type: Date, nullable: false })
-  @IsDate()
-  @Type(() => Date)
-  date!: Date;
+  @ApiProperty({ type: String, nullable: false })
+  @IsDateString()
+  @IsISO8601()
+  date!: string;
 
-  @ApiProperty({ type: Date, nullable: false })
-  @IsDate()
-  @Type(() => Date)
-  start!: Date;
+  @ApiProperty({ type: String, nullable: false })
+  @IsDateString()
+  @IsISO8601()
+  start!: string;
 
-  @ApiProperty({ type: Date, nullable: false })
-  @IsDate()
-  @Type(() => Date)
-  finish!: Date;
+  @ApiProperty({ type: String, nullable: false })
+  @IsDateString()
+  @IsISO8601()
+  finish!: string;
 
   @ApiPropertyOptional({ type: String, nullable: true })
   @IsString()
@@ -79,4 +85,46 @@ export class TaskCreateDto {
   description?: string;
 
   user_id!: string;
+}
+
+export class TaskUpdateDto {
+  @ApiProperty({ type: String })
+  @IsUUID()
+  _id!: string;
+
+  @ApiProperty({ type: String })
+  @IsString()
+  label!: string;
+
+  @ApiEnumProperty(() => ActivityTypeEnum)
+  @IsEnum(ActivityTypeEnum)
+  type!: ActivityTypeEnum;
+
+  @ApiProperty({ type: String, nullable: false })
+  @IsDateString()
+  @IsISO8601()
+  date!: string;
+
+  @ApiProperty({ type: String, nullable: false })
+  @IsDateString()
+  @IsISO8601()
+  start!: string;
+
+  @ApiProperty({ type: String, nullable: false })
+  @IsDateString()
+  @IsISO8601()
+  finish!: string;
+
+  @ApiPropertyOptional({ type: String, nullable: true })
+  @IsString()
+  @IsOptional()
+  description?: string;
+
+  user_id!: string;
+}
+
+export class TaskDeleteDto {
+  @ApiProperty({ type: String })
+  @IsUUID()
+  _id!: string;
 }

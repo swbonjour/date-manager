@@ -1,15 +1,9 @@
 <script lang="ts">
 	import PlusIcon from '$lib/icon/plus.svg?raw';
-	import { onMount } from 'svelte';
+	import { taskStore } from '$lib/stores/task-store';
+	import { DateTime } from 'luxon';
 	import ScheduleTaskEdit from './schedule-task-edit.svelte';
-
 	import ScheduleTask from './schedule-task.svelte';
-	import { client } from '$lib/utils';
-	import { scheduleStore } from '$lib/stores/schedule-store';
-	import type { TaskDto } from '$lib/utils/client';
-	import { userStore } from '$lib/stores/user-store';
-
-	let tasks = $state<TaskDto[]>([]);
 
 	let isEditOpen = $state(false);
 
@@ -17,16 +11,11 @@
 		isEditOpen = !isEditOpen;
 	};
 
-	onMount(async () => {
-		const unsubscribeUserStore = userStore.subscribe(async (user) => {
-			if (user.id) {
-				tasks = await client.task.taskControllerGetTasksByDate({
-					date: $scheduleStore.date.toISO()
-				});
-				unsubscribeUserStore();
-			}
-		});
-	});
+	const sortedTasks = $derived(
+		[...$taskStore.tasks].sort(
+			(a, b) => DateTime.fromISO(a.start).valueOf() - DateTime.fromISO(b.start).valueOf()
+		)
+	);
 </script>
 
 <div class="schedule-tasks">
@@ -37,13 +26,13 @@
 		>
 	</div>
 	<div class="schedule-tasks_tasks">
-		{#each tasks as task}
+		{#each sortedTasks as task}
 			<ScheduleTask {...task}></ScheduleTask>
 		{/each}
 	</div>
 
 	{#if isEditOpen}
-		<ScheduleTaskEdit bind:isEditOpen bind:tasks />
+		<ScheduleTaskEdit bind:isEditOpen />
 	{/if}
 </div>
 

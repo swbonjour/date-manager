@@ -6,15 +6,18 @@
 	import { onMount } from 'svelte';
 	import { scheduleStore } from '$lib/stores/schedule-store';
 	import { DateTime, Duration } from 'luxon';
+	import { taskStore } from '$lib/stores/task-store';
 
 	let currentDate = $state(DateTime.now());
 
-	const scrollDate = (side: 'right' | 'left') => {
+	const scrollDate = async (side: 'right' | 'left') => {
 		if (side === 'right') {
 			currentDate = currentDate.plus(Duration.fromObject({ day: 1 }));
 		} else {
 			currentDate = currentDate.minus(Duration.fromObject({ day: 1 }));
 		}
+
+		await $taskStore.init(currentDate.toISO());
 	};
 
 	onMount(() => {
@@ -61,6 +64,7 @@
 	.schedule-header_datepicker-date {
 		font-size: 24px;
 		font-weight: 600;
+		color: var(--color-neutral);
 	}
 
 	.schedule-header_datepicker-left-arrow,

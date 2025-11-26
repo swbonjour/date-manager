@@ -18,8 +18,11 @@
 
 	.header_logo {
 		width: 6rem;
+
 		display: flex;
 		justify-content: center;
 		align-items: center;
+
+		fill: var(--color-neutral);
 	}
 </style>
