@@ -1,6 +1,6 @@
-import { PUBLIC_HTTP_SERVER_URL } from '$env/static/public';
 import { io, Socket } from 'socket.io-client';
 import { writable } from 'svelte/store';
+import { config } from './config';
 
 let socket: Socket;
 
@@ -9,7 +9,7 @@ export const messages = writable(
 );
 
 export const initSocket = () => {
-	socket = io(PUBLIC_HTTP_SERVER_URL);
+	socket = io(config.PUBLIC_HTTP_SERVER_URL);
 
 	socket.on('connect', () => {
 		console.log('connect');

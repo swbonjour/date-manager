@@ -1,5 +1,5 @@
-import { PUBLIC_HTTP_SERVER_URL } from '$env/static/public';
 import { SchedlyApi, type ApiConfig } from './client';
+import { config } from './config';
 
 export class SchedlyApiSingle extends SchedlyApi<unknown> {
 	private static _instance: SchedlyApi<unknown> | undefined;
@@ -13,7 +13,7 @@ export class SchedlyApiSingle extends SchedlyApi<unknown> {
 }
 
 export const client = SchedlyApiSingle.Instance({
-	baseURL: PUBLIC_HTTP_SERVER_URL,
+	baseURL: config.PUBLIC_HTTP_SERVER_URL,
 	withCredentials: true,
 	//timeout: 120000,
 	timeout: 1000 * 60 * 5 // 5 min

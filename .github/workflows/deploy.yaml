@@ -59,13 +59,6 @@ jobs:
           npm install
           npm run build
 
-      # Сборка бэкенда
-      - name: Build Backend
-        run: |
-          cd backend
-          npm install
-          npm run build
-
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.8.0
         with:
@@ -94,6 +87,12 @@ jobs:
             
             # Запускаем контейнеры
             docker-compose up -d
+
+            cd /backend
+
+            npm install
+
+            npm run build
 
             pm2 stop main
 
