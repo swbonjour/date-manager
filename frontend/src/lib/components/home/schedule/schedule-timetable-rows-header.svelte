@@ -1,5 +1,5 @@
 <div class="schedule_timetable-rows-header">
-	<div class="schedule_timetable-rows-header_label">M/H</div>
+	<div class="schedule_timetable-rows-header_label">H/M</div>
 	<div class="schedule_timetable-rows-header_line">
 		<p class="schedule_timetable-rows-header_line-text">0</p>
 		<div class="schedule_timetable-rows-header_line-circle"></div>
