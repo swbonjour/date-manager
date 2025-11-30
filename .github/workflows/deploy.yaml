@@ -83,10 +83,10 @@ jobs:
             cd /var/www/
             
             # Останавливаем старые контейнеры
-            docker-compose down
+            docker compose down
             
             # Запускаем контейнеры
-            docker-compose up -d
+            docker compose up -d
 
             cd /backend
 
