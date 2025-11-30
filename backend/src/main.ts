@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { ConfigEnv } from './config/conf-env';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { Settings } from 'luxon';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -24,6 +25,8 @@ async function bootstrap() {
     origin: true,
     credentials: true,
   });
+
+  Settings.defaultLocale = 'ru';
 
   const config = app.get(ConfigService<ConfigEnv, true>);
 

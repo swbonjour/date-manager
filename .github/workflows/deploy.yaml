@@ -4,8 +4,6 @@ name: Deploy to Production
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
 
 env:
   REGISTRY: ghcr.io
@@ -43,22 +41,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-          cache: "npm"
-          cache-dependency-path: |
-            frontend/package-lock.json
-            backend/package-lock.json
-
-      # Сборка фронтенда
-      - name: Build Frontend
-        run: |
-          cd frontend
-          npm install
-          npm run build
-
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.8.0
         with:
@@ -72,31 +54,21 @@ jobs:
       # Копирование файлов на сервер
       - name: Copy files to server
         run: |
-          scp -r frontend/build ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/
+          scp -r frontend/ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/
           scp -r backend/ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/
           scp docker-compose.yaml ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/
 
       # Деплой на сервер
       - name: Deploy to server
         run: |
-          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
+          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "
             cd /var/www/
             
             # Останавливаем старые контейнеры
             docker compose down
             
             # Запускаем контейнеры
-            docker compose up -d
-
-            cd /backend
-
-            npm install
-
-            npm run build
-
-            pm2 stop main
-
-            pm2 start main
+            docker compose up -d --build
             
             echo "Deployment completed successfully!"
-          EOF
+          "

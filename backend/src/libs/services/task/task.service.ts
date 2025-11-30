@@ -28,9 +28,13 @@ export class TaskService {
       user_id: dto.user_id,
     });
 
+    console.log(dto);
+
     const date = DateTime.fromISO(dto.date).startOf('day').toUTC();
     const start = DateTime.fromISO(dto.start).toUTC();
     const finish = DateTime.fromISO(dto.finish).toUTC();
+
+    console.log(date);
 
     const intersectingTask = existingTasksByDate.find(
       (task) =>

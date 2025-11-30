@@ -10,6 +10,58 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: date-manager_backend
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - IS_DEV=0
+
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASS=postgres
+      - DB_NAME=date_manager
+
+      - JWT_SECRET=change
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: date-manager_frontend
+    ports:
+      - "80:80"
+    environment:
+      - VITE_PUBLIC_HTTP_SERVER_URL=http://212.67.11.211:3000
+      - VITE_IS_DEV=0
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
 volumes:
   postgres_data:
+
+networks:
+  app-network:
+    driver: bridge
