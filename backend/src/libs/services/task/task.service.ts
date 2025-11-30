@@ -18,9 +18,7 @@ export class TaskService {
   public async getTasksByDate(dto: TaskGetByDateDto): Promise<TaskEntity[]> {
     return await this.manager.findBy(TaskEntity, {
       user_id: dto.user_id,
-      date: DateTime.fromISO(dto.date, { zone: 'utc' })
-        .startOf('day')
-        .toJSDate(),
+      date: DateTime.fromISO(dto.date).startOf('day').toJSDate(),
     });
   }
 
@@ -30,9 +28,9 @@ export class TaskService {
       user_id: dto.user_id,
     });
 
-    const date = DateTime.fromISO(dto.date, { zone: 'utc' }).startOf('day');
-    const start = DateTime.fromISO(dto.start, { zone: 'utc' });
-    const finish = DateTime.fromISO(dto.finish, { zone: 'utc' });
+    const date = DateTime.fromISO(dto.date).startOf('day');
+    const start = DateTime.fromISO(dto.start);
+    const finish = DateTime.fromISO(dto.finish);
 
     const intersectingTask = existingTasksByDate.find(
       (task) =>
@@ -87,9 +85,9 @@ export class TaskService {
       1,
     );
 
-    const date = DateTime.fromISO(dto.date).toUTC().startOf('day');
-    const start = DateTime.fromISO(dto.start).toUTC();
-    const finish = DateTime.fromISO(dto.finish).toUTC();
+    const date = DateTime.fromISO(dto.date).startOf('day');
+    const start = DateTime.fromISO(dto.start);
+    const finish = DateTime.fromISO(dto.finish);
 
     const intersectingTask = existingTasksByDate.find(
       (task) =>
