@@ -66,7 +66,7 @@
 			const newTask = await client.task.taskControllerCreateTask({
 				label: label,
 				type: type,
-				date: DateTime.fromISO(date).toISO()!,
+				date: DateTime.fromISO(`${date}T${startTime}`).toISO()!,
 				start: DateTime.fromISO(`${date}T${startTime}`).toISO()!,
 				finish: DateTime.fromISO(`${date}T${finishTime}`).toISO()!,
 				description: description

@@ -15,6 +15,7 @@ import { TaskModule } from './libs/services/task/task.module';
     ConfigModule.forRoot({
       isGlobal: true,
       load: [config],
+      envFilePath: ['.env.dev', '.env'],
     }),
     TypeOrmModule.forRootAsync({ useClass: TypeormConfig }),
     EventsModule,
