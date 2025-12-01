@@ -42,6 +42,17 @@
 			if (user.id) {
 				await $taskStore.init($scheduleStore.date.toISO());
 
+				const busyMinutes = await client.analytic.analyticControllerGetScheduleBusyAnalytic({
+					date: $scheduleStore.date.toISO()!
+				});
+
+				scheduleStore.update((s) => {
+					return {
+						...s,
+						busyMinutes: busyMinutes.schedule_busy_minutes || 0
+					};
+				});
+
 				unsubscribeUserStore();
 			}
 		});

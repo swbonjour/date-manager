@@ -252,34 +252,39 @@
 
 	.auth-page_form-logo {
 		width: 100%;
+
 		display: flex;
 		align-items: center;
 		justify-content: flex-start;
+
+		fill: var(--color-neutral);
+
 		font-weight: 700;
 		font-size: 25px;
-		margin-top: 1rem;
-		margin-left: 2rem;
+
+		padding: 2rem;
 	}
 
 	.auth-page_form-inner-signup {
+		width: 100%;
+		height: 100%;
+
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		flex-direction: column;
-		width: 100%;
 		gap: 2rem;
-		padding-bottom: 8rem;
-		padding-top: 2rem;
 	}
 
 	.auth-page_form-inner-signin {
+		width: 100%;
+		height: 100%;
+
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		flex-direction: column;
-		width: 100%;
 		gap: 2rem;
-		padding-bottom: 12rem;
 	}
 
 	.auth-page_entrance {
@@ -318,13 +323,14 @@
 	}
 
 	.auth-page_inputs {
+		width: 100%;
+
 		display: flex;
-		flex-direction: column;
 		align-items: center;
 		justify-content: center;
+		flex-direction: column;
+
 		gap: 2rem;
-		flex: 2;
-		width: 100%;
 	}
 
 	.auth-page_input-text {

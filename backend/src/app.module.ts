@@ -9,6 +9,7 @@ import { UserModule } from './libs/services/user/user.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './libs/guards/jwt-auth.guard';
 import { TaskModule } from './libs/services/task/task.module';
+import { AnalyticModule } from './libs/services/analytic/analytic.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { TaskModule } from './libs/services/task/task.module';
     AuthModule,
     UserModule,
     TaskModule,
+    AnalyticModule,
   ],
   controllers: [],
   providers: [{ provide: APP_GUARD, useClass: JwtAuthGuard }],

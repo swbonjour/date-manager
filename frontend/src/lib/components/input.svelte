@@ -154,12 +154,17 @@
 		color: var(--color-neutral);
 	}
 	.inp {
+		width: 100%;
+
+		background-color: var(--color-secondary);
+
 		border: 1px solid;
 		border-color: #e5e5e5;
 		border-radius: 10px;
-		box-sizing: border-box;
+
+		color: var(--color-neutral);
+
 		padding: 1rem;
-		width: 100%;
 	}
 
 	.inp-border {

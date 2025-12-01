@@ -73,6 +73,19 @@ export interface TaskUpdateDto {
   description?: string | null;
 }
 
+export interface AnalyticScheduleBusyGetResponse {
+  schedule_busy_minutes?: number;
+}
+
+export interface AnalyticScheduleBusyDto {
+  date: string;
+}
+
+export interface AnalyticScheduleBusyResponseDto {
+  schedule_busy_minutes: number;
+  date: string;
+}
+
 export interface AuthControllerSignInParams {
   email: string;
   password: string;
@@ -84,6 +97,10 @@ export interface TaskControllerGetTasksByDateParams {
 
 export interface TaskControllerDeleteTaskParams {
   id: string;
+}
+
+export interface AnalyticControllerGetScheduleBusyAnalyticParams {
+  date: string;
 }
 
 import type {
@@ -413,6 +430,46 @@ export class SchedlyApi<
       this.request<void, any>({
         path: `/task/delete/${id}`,
         method: "DELETE",
+        ...params,
+      }),
+  };
+  analytic = {
+    /**
+     * No description
+     *
+     * @tags Analytic
+     * @name AnalyticControllerGetScheduleBusyAnalytic
+     * @request GET:/analytic/calculate-schedule-busy/{date}
+     */
+    analyticControllerGetScheduleBusyAnalytic: (
+      { date, ...query }: AnalyticControllerGetScheduleBusyAnalyticParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<AnalyticScheduleBusyGetResponse, any>({
+        path: `/analytic/calculate-schedule-busy/${date}`,
+        method: "GET",
+        query: query,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Analytic
+     * @name AnalyticControllerCalculateScheduleBusyAnalytic
+     * @request POST:/analytic/calculate-schedule-busy/calc
+     */
+    analyticControllerCalculateScheduleBusyAnalytic: (
+      data: AnalyticScheduleBusyDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<AnalyticScheduleBusyResponseDto, any>({
+        path: `/analytic/calculate-schedule-busy/calc`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
         ...params,
       }),
   };

@@ -7,6 +7,7 @@
 	import { scheduleStore } from '$lib/stores/schedule-store';
 	import { DateTime, Duration } from 'luxon';
 	import { taskStore } from '$lib/stores/task-store';
+	import { client } from '$lib/utils';
 
 	let currentDate = $state(DateTime.now());
 
@@ -18,10 +19,28 @@
 		}
 
 		await $taskStore.init(currentDate.toISO());
+
+		const busyMinutes = await client.analytic.analyticControllerGetScheduleBusyAnalytic({
+			date: currentDate.toISO()!
+		});
+
+		scheduleStore.update((s) => {
+			return {
+				...s,
+				busyMinutes: busyMinutes.schedule_busy_minutes || 0
+			};
+		});
 	};
 
-	onMount(() => {
-		scheduleStore.update(() => ({ date: currentDate }));
+	onMount(async () => {
+		const busyMinutes = await client.analytic.analyticControllerGetScheduleBusyAnalytic({
+			date: currentDate.toISO()!
+		});
+
+		scheduleStore.update(() => ({
+			date: currentDate,
+			busyMinutes: busyMinutes.schedule_busy_minutes || 0
+		}));
 	});
 </script>
 

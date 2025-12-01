@@ -4,6 +4,7 @@ import { ConfigEnv } from './conf-env';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
 import { UserEntity } from 'src/libs/entities/user.entity';
 import { TaskEntity } from 'src/libs/entities/task.entity';
+import { AnalyticEntity } from 'src/libs/entities/analytic.entity';
 
 @Injectable()
 export class TypeormConfig implements TypeOrmOptionsFactory {
@@ -17,7 +18,7 @@ export class TypeormConfig implements TypeOrmOptionsFactory {
       username: this.configService.get('db_user'),
       password: this.configService.get('db_pass'),
       database: this.configService.get('db_name'),
-      entities: [UserEntity, TaskEntity],
+      entities: [UserEntity, TaskEntity, AnalyticEntity],
       synchronize: true,
       useUTC: true,
     };

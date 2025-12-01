@@ -1,11 +1,26 @@
 <script lang="ts">
+	import { scheduleStore } from '$lib/stores/schedule-store';
+	import { onMount } from 'svelte';
+
+	let busyMinutes = $state(0);
+
+	const minutesInDay = 1440;
+
+	const busyMinutesPercent = $derived(Math.round((busyMinutes / minutesInDay) * 100));
+	const unbusyMinutesPercent = $derived(100 - busyMinutesPercent);
+
+	onMount(() => {
+		const scheduleStoreUnsubsriber = scheduleStore.subscribe((s) => {
+			busyMinutes = s.busyMinutes;
+		});
+	});
 </script>
 
 <div class="schedule-tasks-stat">
 	<p class="schedule-tasks-stat_label">График задач</p>
 
 	<div class="schedule-tasks-stat_diagram">
-		<p class="schedule-tasks-stat_diagram-text">75 %</p>
+		<p class="schedule-tasks-stat_diagram-text">{busyMinutesPercent} %</p>
 	</div>
 
 	<div class="schedule-tasks-stat_data">
@@ -13,7 +28,7 @@
 			<p class="schedule-tasks-stat_filled-text">Заполнено</p>
 			<div class="schedule-tasks-stat_filled_data">
 				<div class="schedule-tasks-stat_filled-hint"></div>
-				<p class="schedule-tasks-stat_filled_percent">75 %</p>
+				<p class="schedule-tasks-stat_filled_percent">{busyMinutesPercent} %</p>
 			</div>
 		</div>
 
@@ -21,7 +36,7 @@
 			<p class="schedule-tasks-stat_empty-text">Свободно</p>
 			<div class="schedule-tasks-stat_empty_data">
 				<div class="schedule-tasks-stat_empty-hint"></div>
-				<p class="schedule-tasks-stat_empty_percent">25 %</p>
+				<p class="schedule-tasks-stat_empty_percent">{unbusyMinutesPercent} %</p>
 			</div>
 		</div>
 	</div>

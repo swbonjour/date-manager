@@ -8,6 +8,7 @@
 	import { acitivtyTypesLoc, activityTypes } from '$lib/utils/helper';
 	import { DateTime } from 'luxon';
 	import { taskStore } from '$lib/stores/task-store';
+	import { scheduleStore } from '$lib/stores/schedule-store';
 
 	let { isEditOpen = $bindable(), task = $bindable() }: { isEditOpen: boolean; task?: TaskDto } =
 		$props();
@@ -57,16 +58,31 @@
 		}
 	};
 
+	let labelErr = $state(false);
+
+	const validateLabel = () => {
+		if (!label) {
+			labelErr = true;
+		} else {
+			labelErr = false;
+		}
+	};
+
 	const selectType = (activityType: ActivityTypeEnum) => {
 		type = activityType;
 	};
 
 	const upsertTask = async () => {
+		if (!label) {
+			validateLabel();
+			return;
+		}
+
 		if (!task) {
 			const newTask = await client.task.taskControllerCreateTask({
 				label: label,
 				type: type,
-				date: DateTime.fromISO(`${date}T${startTime}`).toISO()!,
+				date: DateTime.fromISO(date).toISO()!,
 				start: DateTime.fromISO(`${date}T${startTime}`).toISO()!,
 				finish: DateTime.fromISO(`${date}T${finishTime}`).toISO()!,
 				description: description
@@ -101,6 +117,17 @@
 			});
 		}
 
+		const busyMinutes = await client.analytic.analyticControllerCalculateScheduleBusyAnalytic({
+			date: DateTime.fromISO(date).toISO()!
+		});
+
+		scheduleStore.update((s) => {
+			return {
+				...s,
+				busyMinutes: busyMinutes.schedule_busy_minutes
+			};
+		});
+
 		isEditOpen = false;
 	};
 </script>
@@ -110,9 +137,13 @@
 <div class="schedule-task_create" onclick={(event: MouseEvent) => closeEdit(event)}>
 	<div class="schedule-task_create-modal">
 		<input
-			class="schedule-task_create-modal_label"
-			placeholder="Введите название"
+			class={[
+				'schedule-task_create-modal_label',
+				labelErr ? 'schedule-task_create-modal_label-err' : ''
+			]}
+			placeholder={labelErr ? 'Название не может быть пустым' : 'Введите название'}
 			bind:value={label}
+			oninput={() => validateLabel()}
 		/>
 
 		<div class="schedule-task_create-modal_types">
@@ -221,7 +252,7 @@
 
 		padding: 2rem;
 
-		background-color: #f5f4fd;
+		background-color: var(--color-secondary);
 
 		font-size: 32px;
 		font-weight: 500;
@@ -231,6 +262,10 @@
 
 		outline: none;
 		border: none;
+	}
+
+	.schedule-task_create-modal_label-err {
+		border: 1px solid var(--color-accent);
 	}
 
 	.schedule-task_create-modal_label::placeholder {
@@ -352,7 +387,7 @@
 
 		padding: 1rem;
 
-		background-color: #f5f4fd;
+		background-color: var(--color-secondary);
 
 		font-size: 18px;
 		font-weight: 500;

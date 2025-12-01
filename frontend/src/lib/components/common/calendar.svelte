@@ -5,6 +5,8 @@
 	import { capitalizeFirstLetter } from '$lib/utils/helper';
 	import { DateTime } from 'luxon';
 	import { taskStore } from '$lib/stores/task-store';
+	import { client } from '$lib/utils';
+	import { scheduleStore } from '$lib/stores/schedule-store';
 
 	let { currentDate = $bindable() }: { currentDate: DateTime } = $props();
 
@@ -35,6 +37,17 @@
 		currentDate = currentDate.set({ day: day, month: currentMonth.month });
 
 		await $taskStore.init(currentDate.toISO()!);
+
+		const busyMinutes = await client.analytic.analyticControllerGetScheduleBusyAnalytic({
+			date: currentDate.toISO()!
+		});
+
+		scheduleStore.update((s) => {
+			return {
+				...s,
+				busyMinutes: busyMinutes.schedule_busy_minutes || 0
+			};
+		});
 	};
 
 	const openCalendar = () => {
