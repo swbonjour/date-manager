@@ -23,6 +23,7 @@ export interface AuthSignUpDto {
   age: number;
   email: string;
   password: string;
+  timezone: string;
 }
 
 export interface AuthSignUpResponse {
@@ -448,7 +449,6 @@ export class SchedlyApi<
       this.request<AnalyticScheduleBusyGetResponse, any>({
         path: `/analytic/calculate-schedule-busy/${date}`,
         method: "GET",
-        query: query,
         format: "json",
         ...params,
       }),

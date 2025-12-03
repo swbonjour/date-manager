@@ -5,11 +5,13 @@ import { setHeader } from '$lib/utils';
 interface AuthTokenData {
 	_id: string;
 	email: string;
+	timezone: string;
 }
 
 export const userStore = writable({
 	id: '',
 	email: '',
+	timezone: '',
 	usersMap: new Map(),
 	init: () => {
 		userStore.update((u) => {
@@ -18,7 +20,8 @@ export const userStore = writable({
 			return {
 				...u,
 				id: authTokenData?._id || '',
-				email: authTokenData?.email || ''
+				email: authTokenData?.email || '',
+				timezone: authTokenData?.timezone || ''
 			};
 		});
 	}
@@ -31,5 +34,5 @@ const parseAuthToken = (): AuthTokenData | undefined => {
 	}
 	setHeader('Authorization', `Bearer ${authToken}`);
 	const decoded: AuthTokenData = jwt.jwtDecode(authToken);
-	return { _id: decoded._id, email: decoded.email };
+	return { _id: decoded._id, email: decoded.email, timezone: decoded.timezone };
 };

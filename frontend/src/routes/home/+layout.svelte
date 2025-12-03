@@ -17,8 +17,11 @@
 
 <style>
 	.home {
-		width: 100wh;
+		width: 100vw;
 		height: 100vh;
+
+		max-width: 100vw;
+		max-height: 100vh;
 
 		display: flex;
 		flex-direction: column;
@@ -29,11 +32,8 @@
 	}
 
 	.home_inner {
-		width: 100%;
-		height: 100%;
-
 		display: flex;
 
-		border-radius: 40px;
+		flex: 1;
 	}
 </style>

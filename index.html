@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="app">
+        <div class="wrapper-scroll">
+            <div class="item-scroll-header">test</div>
+            <div class="item-scroll-rows">
+                <div class="item-scroll"></div>
+                <div class="item-scroll"></div>
+                <div class="item-scroll"></div>
+                <div class="item-scroll"></div>
+                <div class="item-scroll"></div>
+                <div class="item-scroll"></div>
+                <div class="item-scroll"></div>
+                <div class="item-scroll"></div>
+                <div class="item-scroll"></div>
+                <div class="item-scroll"></div>
+                <div class="item-scroll"></div>
+            </div>
+        </div>
+    </div> 
+</body>
+</html>
+<style>
+    * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+    }
+
+    .app {
+        width: 100vw;
+        height: 100vh;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        background-color: #bdbdbd;
+    }
+
+    .wrapper-scroll {
+        width: 30%;
+        height: 50%;
+
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        flex-direction: column;
+        gap: 2rem;
+
+        background-color: #e2e2e2;
+
+        padding: 2rem;
+        
+        overflow: auto;
+    }
+
+    .item-scroll-rows {
+        width: 100%;
+        height: 100%;
+
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .item-scroll {
+        width: 100%;
+        height: 4rem;
+
+        background-color: #f8f8f8;
+
+        flex-shrink: 0;
+    }
+</style>

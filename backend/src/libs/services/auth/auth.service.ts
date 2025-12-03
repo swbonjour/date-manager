@@ -37,6 +37,7 @@ export class AuthService {
       age: dto.age,
       email: dto.email,
       password: passwordHash,
+      timezone: dto.timezone,
     });
 
     await this.manager.insert(UserEntity, user);
@@ -44,6 +45,7 @@ export class AuthService {
     const authToken = await this.jwtService.signAsync({
       _id: user._id,
       email: user.email,
+      timezone: dto.timezone,
     });
 
     return { authToken };
@@ -70,7 +72,11 @@ export class AuthService {
       );
     }
 
-    const payload: AuthTokenData = { _id: user._id, email: dto.email };
+    const payload: AuthTokenData = {
+      _id: user._id,
+      email: dto.email,
+      timezone: user.timezone,
+    };
 
     const authToken = await this.jwtService.signAsync(payload);
 

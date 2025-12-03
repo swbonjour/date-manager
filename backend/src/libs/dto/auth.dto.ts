@@ -17,6 +17,10 @@ export class AuthSignUpDto {
   @ApiProperty({ type: String })
   @IsString()
   password!: string;
+
+  @ApiProperty({ type: String })
+  @IsString()
+  timezone!: string;
 }
 
 export class AuthSignUpResponse {
@@ -60,4 +64,7 @@ export class AuthTokenData {
 
   @ApiProperty({ type: String })
   email!: string;
+
+  @ApiProperty({ type: String })
+  timezone!: string;
 }

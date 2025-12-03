@@ -26,13 +26,13 @@ export class TaskEntity {
   @Column({ type: 'text', enum: ActivityTypeEnum, nullable: false })
   type!: ActivityTypeEnum;
 
-  @Column({ type: 'timestamp without time zone', nullable: false })
-  date!: Date;
+  @Column({ type: 'date', nullable: false })
+  date!: string;
 
-  @Column({ type: 'timestamp without time zone', nullable: false })
+  @Column({ type: 'timestamp with time zone', nullable: false })
   start!: Date;
 
-  @Column({ type: 'timestamp without time zone', nullable: false })
+  @Column({ type: 'timestamp with time zone', nullable: false })
   finish!: Date;
 
   @Column({ type: 'text', nullable: true })

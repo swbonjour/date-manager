@@ -18,21 +18,30 @@
 		width: 50%;
 		height: 100%;
 
+		max-height: 100%;
+
 		display: flex;
-		justify-content: space-between;
+		justify-content: center;
 		align-items: center;
 		flex-direction: column;
 		gap: 2rem;
-	}
-
-	.schedule_timetable-rows {
-		width: 100%;
-		height: 100%;
 
 		background-color: var(--color-primary);
 
 		border-radius: 20px;
 
 		padding: 2rem;
+	}
+
+	.schedule_timetable-rows {
+		width: 100%;
+
+		flex: 1;
+
+		display: flex;
+		justify-content: flex-start;
+		align-items: center;
+		flex-direction: column;
+		gap: 1rem;
 	}
 </style>

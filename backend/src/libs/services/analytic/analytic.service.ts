@@ -19,7 +19,7 @@ export class AnalyticService {
   ): Promise<AnalyticScheduleBusyGetResponse> {
     const userAnalytic = await this.manager.findOne(AnalyticEntity, {
       where: {
-        date: DateTime.fromISO(dto.date).startOf('day').toJSDate(),
+        date: DateTime.fromISO(dto.date).startOf('day').toISODate()!,
         user_id: dto.user._id,
       },
     });
@@ -32,7 +32,7 @@ export class AnalyticService {
   ): Promise<AnalyticScheduleBusyResponseDto | undefined> {
     const userTasks = await this.manager.find(TaskEntity, {
       where: {
-        date: DateTime.fromISO(dto.date).startOf('day').toJSDate(),
+        date: DateTime.fromISO(dto.date).startOf('day').toISODate()!,
         user_id: dto.user._id,
       },
     });
@@ -57,7 +57,7 @@ export class AnalyticService {
       {
         user_id: dto.user._id,
         schedule_busy_minutes: busyMinutes,
-        date: DateTime.fromISO(dto.date).startOf('day').toJSDate(),
+        date: DateTime.fromISO(dto.date).startOf('day').toISODate()!,
       },
       { conflictPaths: ['user_id', 'date'] },
     );

@@ -232,6 +232,7 @@
 
 	.schedule-task_create-modal {
 		width: 30%;
+		height: 80%;
 
 		display: flex;
 		justify-content: space-between;
@@ -250,11 +251,11 @@
 		width: 100%;
 		height: 3rem;
 
-		padding: 2rem;
+		padding: 1rem;
 
 		background-color: var(--color-secondary);
 
-		font-size: 32px;
+		font-size: 28px;
 		font-weight: 500;
 		color: var(--color-accent);
 
@@ -302,6 +303,7 @@
 		display: flex;
 		justify-content: flex-start;
 		align-items: center;
+		flex-wrap: wrap;
 		gap: 0.4rem;
 	}
 
@@ -383,13 +385,13 @@
 
 	.schedule-task_create-modal_description-input {
 		width: 100%;
-		height: 8rem;
+		max-height: 8rem;
 
 		padding: 1rem;
 
 		background-color: var(--color-secondary);
 
-		font-size: 18px;
+		font-size: 28px;
 		font-weight: 500;
 		color: var(--color-accent);
 
@@ -402,7 +404,7 @@
 	}
 
 	.schedule-task_create-modal-create {
-		height: 2rem;
+		height: 1rem;
 
 		display: flex;
 		justify-content: center;
@@ -412,16 +414,16 @@
 
 		background-color: var(--color-accent);
 
-		font-size: 24px;
+		font-size: 18px;
 		font-weight: 600;
 		color: #ffffff;
 
-		border-radius: 21px;
+		border-radius: 12px;
 
 		outline: none;
 		border: none;
 
-		padding: 2rem;
+		padding: 1.2rem;
 
 		cursor: pointer;
 	}

@@ -60,7 +60,7 @@
 <style>
 	.schedule-header {
 		width: 100%;
-		min-height: 4rem;
+		height: 4rem;
 
 		display: flex;
 		justify-content: space-between;

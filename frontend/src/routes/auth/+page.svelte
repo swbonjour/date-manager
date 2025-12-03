@@ -58,7 +58,13 @@
 		}
 
 		await client.auth
-			.authControllerSignUp({ email: email, password: password, name: name, age: Number(age) })
+			.authControllerSignUp({
+				email: email,
+				password: password,
+				name: name,
+				age: Number(age),
+				timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+			})
 			.then((res) => {
 				initAndRedirect(res.authToken);
 			})

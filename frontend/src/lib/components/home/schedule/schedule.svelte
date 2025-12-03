@@ -14,11 +14,14 @@
 
 <style>
 	.schedule {
-		width: 100%;
-		height: 100%;
+		width: 92%;
+		height: 90%;
+
+		max-width: 100%;
+		max-height: 100%;
 
 		display: flex;
-		justify-content: space-between;
+		justify-content: center;
 		align-items: flex-start;
 		gap: 2rem;
 

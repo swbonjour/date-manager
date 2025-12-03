@@ -10,7 +10,7 @@
 	const unbusyMinutesPercent = $derived(100 - busyMinutesPercent);
 
 	onMount(() => {
-		const scheduleStoreUnsubsriber = scheduleStore.subscribe((s) => {
+		scheduleStore.subscribe((s) => {
 			busyMinutes = s.busyMinutes;
 		});
 	});
@@ -19,7 +19,10 @@
 <div class="schedule-tasks-stat">
 	<p class="schedule-tasks-stat_label">График задач</p>
 
-	<div class="schedule-tasks-stat_diagram">
+	<div
+		class="schedule-tasks-stat_diagram"
+		style="background: conic-gradient(var(--color-accent) 0% {busyMinutesPercent}%, var(--color-secondary) {busyMinutesPercent}% 100%)"
+	>
 		<p class="schedule-tasks-stat_diagram-text">{busyMinutesPercent} %</p>
 	</div>
 
@@ -69,8 +72,6 @@
 	.schedule-tasks-stat_diagram {
 		width: 14rem;
 		height: 14rem;
-
-		background: conic-gradient(var(--color-accent) 0% 75%, var(--color-secondary) 75% 100%);
 
 		display: flex;
 		align-items: center;

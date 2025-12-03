@@ -18,7 +18,7 @@ export class TaskService {
   public async getTasksByDate(dto: TaskGetByDateDto): Promise<TaskEntity[]> {
     return await this.manager.findBy(TaskEntity, {
       user_id: dto.user_id,
-      date: DateTime.fromISO(dto.date).startOf('day').toJSDate(),
+      date: DateTime.fromISO(dto.date).startOf('day').toISODate()!,
     });
   }
 
@@ -53,7 +53,7 @@ export class TaskService {
       _id: randomUUID(),
       label: dto.label,
       type: dto.type,
-      date: date.toJSDate(),
+      date: date.toISODate()!,
       start: start.toJSDate(),
       finish: finish.toJSDate(),
       description: dto.description,
@@ -65,7 +65,7 @@ export class TaskService {
 
       return {
         ...newTask,
-        date: newTask.date.toISOString(),
+        date: newTask.date,
         start: newTask.start.toISOString(),
         finish: newTask.finish.toISOString(),
       };
@@ -115,7 +115,7 @@ export class TaskService {
         {
           label: dto.label,
           type: dto.type,
-          date: date.toJSDate(),
+          date: date.toISODate()!,
           start: start.toJSDate(),
           finish: finish.toJSDate(),
           description: dto.description,
@@ -126,9 +126,11 @@ export class TaskService {
         where: { _id: dto._id },
       });
 
+      console.log(updatedTask);
+
       return {
         ...updatedTask,
-        date: updatedTask.date.toISOString(),
+        date: updatedTask.date,
         start: updatedTask.start.toISOString(),
         finish: updatedTask.finish.toISOString(),
       };

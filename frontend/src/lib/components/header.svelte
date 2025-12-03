@@ -8,11 +8,13 @@
 
 <style>
 	.header {
+		width: 100vw;
+		min-height: 4rem;
+
 		display: flex;
 		justify-content: flex-start;
 		align-items: center;
-		width: 100wh;
-		min-height: 4rem;
+
 		background-color: var(--color-primary);
 	}
 

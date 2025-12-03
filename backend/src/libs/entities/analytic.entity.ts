@@ -3,6 +3,7 @@ import {
   Entity,
   Index,
   JoinColumn,
+  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -17,10 +18,10 @@ export class AnalyticEntity {
   @Column('numeric', { nullable: false })
   schedule_busy_minutes!: number;
 
-  @Column({ type: 'timestamp without time zone', nullable: false })
-  date!: Date;
+  @Column({ type: 'date', nullable: false })
+  date!: string;
 
-  @OneToOne(() => UserEntity, (u) => u._id, { onDelete: 'CASCADE' })
+  @ManyToOne(() => UserEntity, (u) => u._id, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   @Column({ type: 'uuid', nullable: false })
   user_id!: string;

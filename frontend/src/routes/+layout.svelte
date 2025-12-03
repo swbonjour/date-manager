@@ -24,6 +24,7 @@
 	onMount(async () => {
 		$themeStore.init();
 		$userStore.init();
+		Settings.defaultZone = $userStore.timezone;
 		await isAuthenticated();
 	});
 </script>

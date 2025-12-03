@@ -49,7 +49,9 @@
 
 <style>
 	.menu {
+		width: 6rem;
 		min-width: 6rem;
+
 		background-color: var(--color-primary);
 	}
 
