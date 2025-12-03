@@ -7,6 +7,7 @@
 	import { userStore } from '$lib/stores/user-store';
 	import { Settings } from 'luxon';
 	let { children } = $props();
+	import '../app.css';
 
 	Settings.defaultLocale = 'ru';
 

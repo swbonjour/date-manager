@@ -34,11 +34,13 @@
 		"vite": "^7.1.7"
 	},
 	"dependencies": {
+		"@tailwindcss/vite": "^4.1.17",
 		"@types/luxon": "^3.7.1",
 		"axios": "^1.12.2",
 		"jwt-decode": "^4.0.0",
 		"luxon": "^3.7.2",
 		"socket.io-client": "^4.8.1",
-		"swagger-typescript-api": "^13.2.16"
+		"swagger-typescript-api": "^13.2.16",
+		"tailwindcss": "^4.1.17"
 	}
 }
