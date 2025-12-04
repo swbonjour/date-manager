@@ -4,6 +4,9 @@ export const capitalizeFirstLetter = (str: string) => {
 	return str[0].toLocaleUpperCase() + str.slice(1, str.length);
 };
 
+export const emailRegexp =
+	/^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
+
 export const acitivtyTypesLoc: Map<ActivityTypeEnum, string> = new Map([
 	[ActivityTypeEnum.EDUCATION, 'Учеба'],
 	[ActivityTypeEnum.ENTERTAINMENT, 'Развлечение'],

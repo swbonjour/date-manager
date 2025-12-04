@@ -10,6 +10,7 @@ import {
 import { UserEntity } from '../../entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
+import { DateTime } from 'luxon';
 
 @Injectable()
 export class AuthService {
@@ -34,7 +35,7 @@ export class AuthService {
 
     const user = this.manager.create(UserEntity, {
       name: dto.name,
-      age: dto.age,
+      age: DateTime.fromISO(dto.age).toISODate()!,
       email: dto.email,
       password: passwordHash,
       timezone: dto.timezone,

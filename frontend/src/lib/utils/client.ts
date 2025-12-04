@@ -20,7 +20,7 @@ export enum ActivityTypeEnum {
 
 export interface AuthSignUpDto {
   name: string;
-  age: number;
+  age: string;
   email: string;
   password: string;
   timezone: string;

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import Button from '$lib/components/button.svelte';
 	import { themeStore } from '$lib/stores/theme-store';
 	import { onMount } from 'svelte';
 	import { client } from '$lib/utils';
@@ -31,9 +30,9 @@
 </script>
 
 <svelte:head></svelte:head>
-
+<!-- 
 <div style="position: absolute; right: 4rem; bottom: 4rem; color: var(--color-neutral)">
 	<Button label="Switch colors" onclick={$themeStore.toggle} size="m"></Button>
-</div>
+</div> -->
 
 {@render children?.()}

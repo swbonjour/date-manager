@@ -1,14 +1,15 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsDateString, IsISO8601, IsOptional, IsString } from 'class-validator';
 
 export class AuthSignUpDto {
   @ApiProperty({ type: String })
   @IsString()
   name!: string;
 
-  @ApiProperty({ type: Number })
-  @IsNumber()
-  age!: number;
+  @ApiProperty({ type: String, nullable: false })
+  @IsDateString()
+  @IsISO8601()
+  age!: string;
 
   @ApiProperty({ type: String })
   @IsString()
