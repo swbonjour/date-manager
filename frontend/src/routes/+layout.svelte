@@ -7,23 +7,27 @@
 	import { Settings } from 'luxon';
 	let { children } = $props();
 	import '../app.css';
-
-	Settings.defaultLocale = 'ru';
+	import { page } from '$app/state';
 
 	const isAuthenticated = async () => {
 		await client.auth
 			.authControllerWhoAmI()
 			.then(() => {
-				goto('/home');
+				if (page.url.href.includes('/auth')) {
+					goto('/home/schedule');
+				}
 			})
 			.catch(() => {
-				goto('/auth');
+				if (!page.url.href.includes('/auth')) {
+					goto('/auth');
+				}
 			});
 	};
 
 	onMount(async () => {
 		$themeStore.init();
 		$userStore.init();
+		Settings.defaultLocale = 'ru';
 		Settings.defaultZone = $userStore.timezone;
 		await isAuthenticated();
 	});

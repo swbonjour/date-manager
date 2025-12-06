@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import { userStore } from '$lib/stores/user-store';
 	import { client } from '$lib/utils';
 	import { emailRegexp } from '$lib/utils/helper';
 	import Input from '../common/input.svelte';
@@ -28,17 +30,22 @@
 			return;
 		}
 
-		await client.auth.authControllerSignIn({
+		const authData = await client.auth.authControllerSignIn({
 			email: email,
 			password: password
 		});
+
+		if (authData) {
+			$userStore.init(authData.authToken);
+			goto('/home/schedule');
+		}
 	};
 </script>
 
-<div class="w-full flex-1 flex justify-center items-center flex-col gap-6">
-	<div class="w-3/4 md:w-1/2 flex flex-col gap-12">
+<div class="flex w-full flex-1 flex-col items-center justify-center gap-6">
+	<div class="flex w-3/4 flex-col gap-12 md:w-1/2">
 		<div>
-			<p class="mb-2 font-medium">Электронная почта</p>
+			<p class="text-neutral mb-2 font-medium">Электронная почта</p>
 			<Input
 				inputAttributes={{ placeholder: 'example@mail.ru', maxlength: 254 }}
 				bind:value={email}
@@ -46,7 +53,7 @@
 			/>
 		</div>
 		<div>
-			<p class="mb-2 font-medium">Пароль</p>
+			<p class="text-neutral mb-2 font-medium">Пароль</p>
 			<Input
 				inputAttributes={{ placeholder: '******', type: 'password' }}
 				bind:value={password}
@@ -55,12 +62,12 @@
 		</div>
 
 		<button
-			class="h-12 bg-neutral rounded-lg text-primary text-lg font-medium cursor-pointer"
+			class="bg-neutral text-primary h-12 cursor-pointer rounded-lg text-lg font-medium"
 			onclick={signIn}>Войти</button
 		>
-		<div class="flex justify-center items-center flex-wrap gap-2">
-			<p class="mb-2 font-medium">Ещё нет аккаунта?</p>
-			<button class="mb-2 text-accent font-medium cursor-pointer" onclick={changeToSignup}>
+		<div class="flex flex-wrap items-center justify-center gap-2">
+			<p class="text-neutral mb-2 font-medium">Ещё нет аккаунта?</p>
+			<button class="text-accent mb-2 cursor-pointer font-medium" onclick={changeToSignup}>
 				Зарегистрироваться
 			</button>
 		</div>

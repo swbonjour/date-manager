@@ -8,6 +8,7 @@ const getThemeByName = (name: ThemesName) => themes.find((item) => item.name ===
 export const themeStore = writable({
 	...getThemeByName(currentTheme),
 	init: () => {
+		currentTheme = (localStorage.getItem('theme') as ThemesName) || ThemesName.LIGHT;
 		setRootColors(getThemeByName(currentTheme)!.colors);
 	},
 	toggle: () => {
@@ -15,6 +16,7 @@ export const themeStore = writable({
 		const theme = getThemeByName(currentTheme);
 		themeStore.update((t) => ({ ...t, ...theme }));
 		setRootColors(theme!.colors);
+		localStorage.setItem('theme', currentTheme);
 	}
 });
 

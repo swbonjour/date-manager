@@ -17,7 +17,10 @@
 <input
 	{...inputAttributes}
 	bind:value
-	class={['w-full outline-transparent border-b', isErr ? 'border-red-600' : '']}
+	class={[
+		'text-neutral w-full border-b outline-0 outline-transparent',
+		isErr ? 'border-red-600' : ''
+	]}
 	oninput={() => {
 		isErr = false;
 		if (onInput) {

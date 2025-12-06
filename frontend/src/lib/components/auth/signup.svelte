@@ -3,6 +3,8 @@
 	import Input from '../common/input.svelte';
 	import { emailRegexp } from '$lib/utils/helper';
 	import { client } from '$lib/utils';
+	import { userStore } from '$lib/stores/user-store';
+	import { goto } from '$app/navigation';
 
 	let { isSignin = $bindable() } = $props();
 
@@ -36,24 +38,29 @@
 			return;
 		}
 
-		await client.auth.authControllerSignUp({
+		const authData = await client.auth.authControllerSignUp({
 			name: name,
 			age: DateTime.fromISO(age).toISODate()!,
 			email: email,
 			password: password,
 			timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
 		});
+
+		if (authData) {
+			$userStore.init(authData.authToken);
+			goto('/home/schedule');
+		}
 	};
 </script>
 
-<div class="w-full flex-1 flex justify-center items-center flex-col gap-6">
-	<div class="w-3/4 md:w-1/2 flex flex-col gap-8">
+<div class="flex w-full flex-1 flex-col items-center justify-center gap-6">
+	<div class="flex w-3/4 flex-col gap-8 md:w-1/2">
 		<div>
-			<p class="mb-2 font-medium">Имя</p>
+			<p class="text-neutral mb-2 font-medium">Имя</p>
 			<Input inputAttributes={{ placeholder: 'Иван', maxlength: 35 }} bind:value={name} />
 		</div>
 		<div>
-			<p class="mb-2 font-medium">Возраст</p>
+			<p class="text-neutral mb-2 font-medium">Возраст</p>
 			<Input
 				inputAttributes={{
 					type: 'date',
@@ -64,7 +71,7 @@
 			/>
 		</div>
 		<div>
-			<p class="mb-2 font-medium">Электронная почта</p>
+			<p class="text-neutral mb-2 font-medium">Электронная почта</p>
 			<Input
 				inputAttributes={{ placeholder: 'example@mail.ru', type: 'email', maxlength: 254 }}
 				bind:value={email}
@@ -72,11 +79,11 @@
 			/>
 		</div>
 		<div>
-			<p class="mb-2 font-medium">Пароль</p>
+			<p class="text-neutral mb-2 font-medium">Пароль</p>
 			<Input inputAttributes={{ placeholder: '******', type: 'password' }} bind:value={password} />
 		</div>
 		<div>
-			<p class="mb-2 font-medium">Подтверждение пароля</p>
+			<p class="text-neutral mb-2 font-medium">Подтверждение пароля</p>
 			<Input
 				inputAttributes={{ placeholder: '******', type: 'password' }}
 				bind:value={passwordConfirm}
@@ -85,12 +92,12 @@
 		</div>
 
 		<button
-			class="h-12 bg-neutral rounded-lg text-primary text-lg font-medium cursor-pointer"
+			class="bg-neutral text-primary h-12 cursor-pointer rounded-lg text-lg font-medium"
 			onclick={signUp}>Зарегистрироваться</button
 		>
-		<div class="flex justify-center items-center flex-wrap gap-2">
-			<p class="mb-2 font-medium">Уже есть аккаунт?</p>
-			<button class="mb-2 text-accent font-medium cursor-pointer" onclick={changeToSignin}>
+		<div class="flex flex-wrap items-center justify-center gap-2">
+			<p class="text-neutral mb-2 font-medium">Уже есть аккаунт?</p>
+			<button class="text-accent mb-2 cursor-pointer font-medium" onclick={changeToSignin}>
 				Войти
 			</button>
 		</div>

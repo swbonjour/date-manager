@@ -10,6 +10,7 @@ export const themes: {
 		secondary: string;
 		accent: string;
 		neutral: string;
+		secondary_contrast: string;
 		work: string;
 		education: string;
 		hobby: string;
@@ -25,6 +26,7 @@ export const themes: {
 			secondary: '#f7f9fa',
 			accent: '#8858ff',
 			neutral: '#141414',
+			secondary_contrast: '#c4c4c4',
 
 			work: '#8e80f9',
 			education: '#50caff',
@@ -42,6 +44,7 @@ export const themes: {
 			secondary: '#2c2c2c',
 			accent: '#8858ff',
 			neutral: '#f7f9fa',
+			secondary_contrast: '#f7f9fa',
 
 			work: '#8e80f9',
 			education: '#50caff',

@@ -13,8 +13,12 @@ export const userStore = writable({
 	email: '',
 	timezone: '',
 	usersMap: new Map(),
-	init: () => {
+	init: (authToken?: string) => {
 		userStore.update((u) => {
+			if (authToken) {
+				localStorage.setItem('auth-token', authToken);
+			}
+
 			const authTokenData = parseAuthToken();
 
 			return {

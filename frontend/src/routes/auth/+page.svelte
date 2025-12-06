@@ -6,13 +6,13 @@
 	let isSignin = $state(true);
 </script>
 
-<div class="w-screen h-screen flex justify-center items-center bg-secondary">
+<div class="bg-secondary flex h-screen w-screen items-center justify-center">
 	<div
-		class="w-full h-full md:w-1/3 md:h-3/4 flex justify-center items-center flex-col bg-primary shadow-xl rounded-2xl"
+		class="bg-primary flex h-full w-full flex-col items-center justify-center rounded-2xl shadow-xl md:h-3/4 md:w-1/3"
 	>
-		<div class="w-full flex items-center pl-8 pt-8">
-			<div>{@html Logo}</div>
-			<p class="text-2xl font-bold">Schedly</p>
+		<div class="flex w-3/4 items-center pt-8 md:w-full md:pl-8">
+			<div class="fill-neutral">{@html Logo}</div>
+			<p class="text-neutral text-2xl font-bold">Schedly</p>
 		</div>
 		{#if isSignin}
 			<Signin bind:isSignin />

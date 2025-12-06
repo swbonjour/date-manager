@@ -39,6 +39,7 @@
 		"axios": "^1.12.2",
 		"jwt-decode": "^4.0.0",
 		"luxon": "^3.7.2",
+		"prettier-plugin-tailwindcss": "^0.7.2",
 		"socket.io-client": "^4.8.1",
 		"swagger-typescript-api": "^13.2.16",
 		"tailwindcss": "^4.1.17"
