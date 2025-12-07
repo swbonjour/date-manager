@@ -23,7 +23,7 @@ export const themes: {
 		name: ThemesName.LIGHT,
 		colors: {
 			primary: '#ffffff',
-			secondary: '#f7f9fa',
+			secondary: '#eff0f1',
 			accent: '#8858ff',
 			neutral: '#141414',
 			secondary_contrast: '#c4c4c4',
@@ -44,7 +44,7 @@ export const themes: {
 			secondary: '#2c2c2c',
 			accent: '#8858ff',
 			neutral: '#f7f9fa',
-			secondary_contrast: '#f7f9fa',
+			secondary_contrast: '#9c9c9c',
 
 			work: '#8e80f9',
 			education: '#50caff',

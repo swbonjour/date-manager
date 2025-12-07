@@ -1,271 +1,184 @@
 <script lang="ts">
-	import LeftArrow from '$lib/icon/left-arrow.svg?raw';
-	import RightArrow from '$lib/icon/right-arrow.svg?raw';
 	import CalendarIcon from '$lib/icon/calendar.svg?raw';
+	import { scheduleStore } from '$lib/stores/schedule-store';
 	import { capitalizeFirstLetter } from '$lib/utils/helper';
 	import { DateTime } from 'luxon';
-	import { taskStore } from '$lib/stores/task-store';
-	import { client } from '$lib/utils';
-	import { scheduleStore } from '$lib/stores/schedule-store';
+	import LeftArrow from '$lib/icon/left-arrow.svg?raw';
+	import RightArrow from '$lib/icon/right-arrow.svg?raw';
 
-	let { currentDate = $bindable() }: { currentDate: DateTime } = $props();
+	let { dateToUpdate = $bindable() }: { dateToUpdate: DateTime<true> } = $props();
 
-	let isOpen = $state(false);
+	let isCalendarOpen = $state(false);
 
-	let currentMonth = $state(currentDate.startOf('month'));
+	let calendarDate = $state(dateToUpdate);
+	const daysInMonth = $derived(calendarDate.daysInMonth);
 
-	const getMonthDays = () => {
-		return Array.from(
-			Array(currentMonth.daysInMonth)
-				.keys()
-				.map((item) => item + 1)
-		);
-	};
+	let daysToAddToStart = $state(0);
+	let daysToAddToEnd = $state(0);
 
-	let daysInCurrentMonth = $state(getMonthDays());
+	const daysInTotal = 42;
 
-	const scrollMonth = (side: 'left' | 'right') => {
-		if (side === 'left') {
-			currentMonth = currentMonth.minus({ month: 1 });
+	let previousMonthDate = $derived(calendarDate.minus({ month: 1 }));
+	let nextMonthDate = $derived(calendarDate.plus({ month: 1 }));
+
+	const calcDaysIfFirstDayIsNotMonday = () => {
+		const startOfMonthDay = calendarDate.startOf('month').weekday;
+		let daysToAddToStart = 0;
+		if (startOfMonthDay !== 1) {
+			daysToAddToStart = startOfMonthDay - 1;
 		} else {
-			currentMonth = currentMonth.plus({ month: 1 });
+			daysToAddToStart = 0;
 		}
-		daysInCurrentMonth = getMonthDays();
+
+		return daysToAddToStart;
 	};
 
-	const selectDate = async (day: number) => {
-		currentDate = currentDate.set({ day: day, month: currentMonth.month });
+	const calcDaysIfLastDayIsNotSunday = () => {
+		const endOfMonthDay = calendarDate.endOf('month').weekday;
+		let daysToAddToEnd = 0;
+		if (endOfMonthDay !== 7) {
+			daysToAddToEnd = 7 - endOfMonthDay;
+		} else {
+			daysToAddToEnd = 0;
+		}
 
-		await $taskStore.init(currentDate.toISO()!);
+		const daysSum = daysToAddToStart + daysToAddToEnd + daysInMonth;
+		if (daysSum !== daysInTotal) {
+			daysToAddToEnd += daysInTotal - daysSum;
+		}
 
-		const busyMinutes = await client.analytic.analyticControllerGetScheduleBusyAnalytic({
-			date: currentDate.toISO()!
-		});
-
-		scheduleStore.update((s) => {
-			return {
-				...s,
-				busyMinutes: busyMinutes.schedule_busy_minutes || 0
-			};
-		});
+		return daysToAddToEnd;
 	};
 
-	const openCalendar = () => {
-		isOpen = !isOpen;
+	const toggleCalendar = () => {
+		isCalendarOpen = !isCalendarOpen;
+		calendarDate = $scheduleStore.date;
 	};
+
+	const scrollDate = (side: 'left' | 'right') => {
+		const newDate =
+			side === 'right' ? calendarDate.plus({ month: 1 }) : calendarDate.minus({ month: 1 });
+		calendarDate = newDate;
+	};
+
+	const selectDate = (date: DateTime) => {
+		dateToUpdate = date;
+		toggleCalendar();
+	};
+
+	$effect(() => {
+		calendarDate;
+
+		daysToAddToStart = calcDaysIfFirstDayIsNotMonday();
+		daysToAddToEnd = calcDaysIfLastDayIsNotSunday();
+	});
 </script>
 
-{#if !isOpen}
-	<button class="calendar_btn" onclick={() => openCalendar()}>{@html CalendarIcon}</button>
-{:else}
-	<div class="calendar_wrapper">
-		<button class="calendar_btn" onclick={() => openCalendar()}>{@html CalendarIcon}</button>
-		<div class="calendar">
-			<div class="calendar_header">
-				<div class="calendar_header-select">
-					<div class="calendar_header-select-date">
-						{capitalizeFirstLetter(currentMonth.toFormat('LLLL y'))}
-					</div>
-
-					<div class="calendar_header-select-date-scroll">
-						<button
-							class="calendar_header-select-date-scroll_left-arrow"
-							onclick={() => scrollMonth('left')}>{@html LeftArrow}</button
-						>
-						<button
-							class="calendar_header-select-date-scroll_right-arrow"
-							onclick={() => scrollMonth('right')}>{@html RightArrow}</button
-						>
-					</div>
-				</div>
-
-				<div class="calendar_header-weekdays">
-					<p class="calendar_header-weekdays-day">Пн</p>
-					<p class="calendar_header-weekdays-day">Вт</p>
-					<p class="calendar_header-weekdays-day">Ср</p>
-					<p class="calendar_header-weekdays-day">Чт</p>
-					<p class="calendar_header-weekdays-day">Пт</p>
-					<p class="calendar_header-weekdays-day">Сб</p>
-					<p class="calendar_header-weekdays-day">Вс</p>
+{#if isCalendarOpen}
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
+	<div
+		class="bg-primary absolute top-0 left-0 z-10 h-screen w-screen transition-all md:opacity-0"
+		onclick={toggleCalendar}
+	></div>
+{/if}
+<div class="flex items-center justify-center md:relative">
+	<button class="fill-neutral hover:cursor-pointer" onclick={toggleCalendar}
+		>{@html CalendarIcon}</button
+	>
+	{#if isCalendarOpen}
+		<div
+			class="bg-primary md:shadow-neutral absolute top-1/2 left-1/2 z-20 w-screen -translate-x-1/2 -translate-y-1/2 transform rounded-xl p-4 pt-2 md:top-full md:-left-32 md:mt-2 md:w-70 md:translate-x-0 md:translate-y-0 md:shadow-md"
+		>
+			<div class="flex h-12 items-center justify-between pl-2">
+				<p class="text-lg font-semibold">{calendarDate.toFormat('LLLL yyyy')}</p>
+				<div class="flex w-1/4 items-center justify-between">
+					<button class="fill-accent hover:cursor-pointer" onclick={() => scrollDate('left')}
+						>{@html LeftArrow}</button
+					>
+					<button class="fill-accent hover:cursor-pointer" onclick={() => scrollDate('right')}
+						>{@html RightArrow}</button
+					>
 				</div>
 			</div>
-
-			<div class="calendar_days">
-				{#each daysInCurrentMonth as day}
-					{#if day === currentMonth.day}
-						<button
-							class={['calendar_days-day', `calendar_days-day-start-${currentMonth.day}`]}
-							onclick={() => selectDate(day)}
-						>
-							{day}
-						</button>
-					{:else}
-						<button class="calendar_days-day" onclick={() => selectDate(day)}>{day}</button>
-					{/if}
+			<div class="grid grid-cols-7 grid-rows-6 gap-2">
+				<div
+					class="text-neutral flex h-8 w-8 items-center justify-center text-center text-xs font-semibold"
+				>
+					{capitalizeFirstLetter(calendarDate.startOf('week').toFormat('EEE'))}
+				</div>
+				<div
+					class="text-neutral flex h-8 w-8 items-center justify-center text-center text-xs font-semibold"
+				>
+					{capitalizeFirstLetter(calendarDate.startOf('week').plus({ day: 1 }).toFormat('EEE'))}
+				</div>
+				<div
+					class="text-neutral flex h-8 w-8 items-center justify-center text-center text-xs font-semibold"
+				>
+					{capitalizeFirstLetter(calendarDate.startOf('week').plus({ day: 2 }).toFormat('EEE'))}
+				</div>
+				<div
+					class="text-neutral flex h-8 w-8 items-center justify-center text-center text-xs font-semibold"
+				>
+					{capitalizeFirstLetter(calendarDate.startOf('week').plus({ day: 3 }).toFormat('EEE'))}
+				</div>
+				<div
+					class="text-neutral flex h-8 w-8 items-center justify-center text-center text-xs font-semibold"
+				>
+					{capitalizeFirstLetter(calendarDate.startOf('week').plus({ day: 4 }).toFormat('EEE'))}
+				</div>
+				<div
+					class="text-neutral flex h-8 w-8 items-center justify-center text-center text-xs font-semibold"
+				>
+					{capitalizeFirstLetter(calendarDate.startOf('week').plus({ day: 5 }).toFormat('EEE'))}
+				</div>
+				<div
+					class="text-neutral flex h-8 w-8 items-center justify-center text-center text-xs font-semibold"
+				>
+					{capitalizeFirstLetter(calendarDate.startOf('week').plus({ day: 6 }).toFormat('EEE'))}
+				</div>
+				{#each { length: daysToAddToStart }, day}
+					<button
+						class="text-secondary_contrast hover:bg-secondary flex h-8 w-8 items-center justify-center rounded-md text-sm transition-all hover:cursor-pointer"
+						onclick={() =>
+							selectDate(
+								DateTime.fromObject({
+									year: previousMonthDate.year,
+									month: previousMonthDate.month,
+									day: previousMonthDate.daysInMonth + day - daysToAddToStart + 1
+								})
+							)}
+						>{previousMonthDate.endOf('month').plus({ day: day - daysToAddToStart + 1 })
+							.day}</button
+					>
+				{/each}
+				{#each { length: daysInMonth }, day}
+					<button
+						class="text-neutral hover:bg-secondary flex h-8 w-8 items-center justify-center rounded-md text-sm transition-all hover:cursor-pointer"
+						onclick={() =>
+							selectDate(
+								DateTime.fromObject({
+									year: calendarDate.year,
+									month: calendarDate.month,
+									day: day + 1
+								})
+							)}>{day + 1}</button
+					>
+				{/each}
+				{#each { length: daysToAddToEnd }, day}
+					<button
+						class="text-secondary_contrast hover:bg-secondary flex h-8 w-8 items-center justify-center rounded-md text-sm transition-all hover:cursor-pointer"
+						onclick={() =>
+							selectDate(
+								DateTime.fromObject({
+									year: nextMonthDate.year,
+									month: nextMonthDate.month,
+									day: day + 1
+								})
+							)}>{day + 1}</button
+					>
 				{/each}
 			</div>
 		</div>
-	</div>
-{/if}
-
-<style>
-	.calendar_wrapper {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		flex-direction: column;
-
-		position: relative;
-	}
-
-	.calendar_btn {
-		background-color: var(--color-primary);
-		fill: var(--color-neutral);
-
-		outline: none;
-		border: none;
-
-		cursor: pointer;
-	}
-
-	.calendar {
-		background-color: var(--color-primary);
-
-		border-radius: 20px;
-
-		z-index: 9;
-
-		overflow: hidden;
-
-		position: absolute;
-
-		top: 2rem;
-
-		box-shadow: 0px 4px 12px 0px var(--color-shadow);
-	}
-
-	.calendar_header {
-		width: 100%;
-
-		display: flex;
-		justify-content: space-around;
-		align-items: flex-start;
-		flex-direction: column;
-
-		border-bottom: 1px solid var(--color-secondary);
-
-		padding-top: 1rem;
-	}
-
-	.calendar_header-select {
-		width: 100%;
-
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-
-		padding-right: 1rem;
-		margin-bottom: 1rem;
-	}
-
-	.calendar_header-select-date {
-		font-size: 20px;
-		font-weight: 700;
-
-		color: var(--color-accent);
-
-		padding-left: 0.8rem;
-	}
-
-	.calendar_header-select-date-scroll {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		gap: 2rem;
-	}
-
-	.calendar_header-select-date-scroll_left-arrow,
-	.calendar_header-select-date-scroll_right-arrow {
-		background-color: var(--color-primary);
-		fill: var(--color-accent);
-
-		outline: none;
-		border: none;
-
-		cursor: pointer;
-	}
-
-	.calendar_header-weekdays {
-		width: 100%;
-
-		display: flex;
-		justify-content: space-around;
-		align-items: center;
-
-		font-size: 16px;
-		font-weight: 700;
-
-		padding-bottom: 1rem;
-	}
-
-	.calendar_header-weekdays-day {
-		color: var(--color-neutral);
-	}
-
-	.calendar_days {
-		display: grid;
-		grid-template-columns: repeat(7, 3rem);
-		grid-auto-rows: 3rem;
-
-		background-color: var(--color-primary);
-
-		border-radius: 20px;
-	}
-
-	.calendar_days-day {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-
-		background-color: var(--color-primary);
-
-		outline: none;
-		border: none;
-
-		color: var(--color-neutral);
-	}
-
-	.calendar_days-day-start-1 {
-		grid-column-start: 1;
-	}
-
-	.calendar_days-day-start-2 {
-		grid-column-start: 2;
-	}
-
-	.calendar_days-day-start-3 {
-		grid-column-start: 3;
-	}
-
-	.calendar_days-day-start-4 {
-		grid-column-start: 4;
-	}
-
-	.calendar_days-day-start-5 {
-		grid-column-start: 5;
-	}
-
-	.calendar_days-day-start-6 {
-		grid-column-start: 6;
-	}
-
-	.calendar_days-day-start-0 {
-		grid-column-start: 7;
-	}
-
-	.calendar_days-day:hover {
-		background-color: var(--color-secondary);
-
-		cursor: pointer;
-	}
-</style>
+	{/if}
+</div>

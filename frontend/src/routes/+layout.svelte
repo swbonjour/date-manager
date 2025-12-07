@@ -8,6 +8,7 @@
 	let { children } = $props();
 	import '../app.css';
 	import { page } from '$app/state';
+	import { scheduleStore } from '$lib/stores/schedule-store';
 
 	const isAuthenticated = async () => {
 		await client.auth
@@ -29,6 +30,7 @@
 		$userStore.init();
 		Settings.defaultLocale = 'ru';
 		Settings.defaultZone = $userStore.timezone;
+		$scheduleStore.init();
 		await isAuthenticated();
 	});
 </script>
