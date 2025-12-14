@@ -31,6 +31,14 @@
 		Settings.defaultLocale = 'ru';
 		Settings.defaultZone = $userStore.timezone;
 		$scheduleStore.init();
+		window.addEventListener('resize', () => {
+			const isTasksOpen = window.innerWidth > 768;
+
+			scheduleStore.update((s) => ({
+				...s,
+				isTasksOpen: isTasksOpen
+			}));
+		});
 		await isAuthenticated();
 	});
 </script>

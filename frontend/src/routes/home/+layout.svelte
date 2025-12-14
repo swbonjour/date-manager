@@ -7,7 +7,7 @@
 
 <svelte:head></svelte:head>
 
-<div class="bg-secondary flex h-screen max-h-screen w-screen">
+<div class="bg-secondary flex h-screen max-h-screen w-screen overflow-hidden">
 	<Menu />
 	<div class="bg-primary flex h-full w-full flex-col">
 		<Header />

@@ -25,7 +25,11 @@
 	};
 
 	const toggleMenu = () => {
-		if (touchDiff < 150 && touchDiff > -150) {
+		if (touchStart > 100) {
+			return;
+		}
+
+		if (touchDiff < 50 && touchDiff > -50) {
 			return;
 		}
 
@@ -57,7 +61,7 @@
 {/if}
 <div
 	class={[
-		'bg-primary absolute top-0 z-50 flex h-screen w-20 flex-col items-center gap-8 transition-all md:static',
+		'bg-primary absolute top-0 z-50 flex h-screen min-w-20 flex-col items-center gap-8 transition-all md:static',
 		isMenuOpen ? 'left-0' : '-left-20'
 	]}
 >

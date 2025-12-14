@@ -3,11 +3,19 @@
 	import RightArrow from '$lib/icon/right-arrow.svg?raw';
 	import LeftArrow from '$lib/icon/left-arrow.svg?raw';
 	import Calendar from '$lib/components/common/calendar.svelte';
+	import Todo from '$lib/icon/todo.svg?raw';
 
 	const scrollDate = (side: 'left' | 'right') => {
 		scheduleStore.update((s) => ({
 			...s,
 			date: side === 'right' ? s.date.plus({ day: 1 }) : s.date.minus({ day: 1 })
+		}));
+	};
+
+	const toggleTasks = () => {
+		scheduleStore.update((s) => ({
+			...s,
+			isTasksOpen: !$scheduleStore.isTasksOpen
 		}));
 	};
 </script>
@@ -26,6 +34,10 @@
 			</div>
 			<button class="fill-accent hover:cursor-pointer" onclick={() => scrollDate('right')}
 				>{@html RightArrow}</button
+			>
+			<button
+				class="fill-neutral absolute right-8 hover:cursor-pointer md:hidden"
+				onclick={toggleTasks}>{@html Todo}</button
 			>
 		</div>
 	</div>
