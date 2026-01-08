@@ -34,10 +34,10 @@ export class TaskService {
 
     const intersectingTask = existingTasksByDate.find(
       (task) =>
-        (start.valueOf() >= task.start.valueOf() &&
-          start.valueOf() <= task.finish.valueOf()) ||
-        (finish.valueOf() >= task.start.valueOf() &&
-          finish.valueOf() <= task.finish.valueOf()) ||
+        (start.valueOf() > task.start.valueOf() &&
+          start.valueOf() < task.finish.valueOf()) ||
+        (finish.valueOf() > task.start.valueOf() &&
+          finish.valueOf() < task.finish.valueOf()) ||
         (start.valueOf() <= task.start.valueOf() &&
           finish.valueOf() >= task.finish.valueOf()),
     );
@@ -91,10 +91,10 @@ export class TaskService {
 
     const intersectingTask = existingTasksByDate.find(
       (task) =>
-        (start.valueOf() >= task.start.valueOf() &&
-          start.valueOf() <= task.finish.valueOf()) ||
-        (finish.valueOf() >= task.start.valueOf() &&
-          finish.valueOf() <= task.finish.valueOf()) ||
+        (start.valueOf() > task.start.valueOf() &&
+          start.valueOf() < task.finish.valueOf()) ||
+        (finish.valueOf() > task.start.valueOf() &&
+          finish.valueOf() < task.finish.valueOf()) ||
         (start.valueOf() <= task.start.valueOf() &&
           finish.valueOf() >= task.finish.valueOf()),
     );

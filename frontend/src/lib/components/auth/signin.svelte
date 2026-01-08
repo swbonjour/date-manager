@@ -3,7 +3,9 @@
 	import { userStore } from '$lib/stores/user-store';
 	import { client } from '$lib/utils';
 	import { emailRegexp } from '$lib/utils/helper';
-	import Input from '../common/input.svelte';
+	import Input from '$lib/components/common/input.svelte';
+	import { scheduleStore } from '$lib/stores/schedule-store';
+	import { Settings } from 'luxon';
 
 	let { isSignin = $bindable() } = $props();
 
@@ -37,6 +39,17 @@
 
 		if (authData) {
 			$userStore.init(authData.authToken);
+			Settings.defaultLocale = 'ru';
+			Settings.defaultZone = $userStore.timezone;
+			$scheduleStore.init();
+			window.addEventListener('resize', () => {
+				const isTasksOpen = window.innerWidth > 768;
+
+				scheduleStore.update((s) => ({
+					...s,
+					isTasksOpen: isTasksOpen
+				}));
+			});
 			goto('/home/schedule');
 		}
 	};

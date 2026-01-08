@@ -4,6 +4,12 @@
 	import LeftArrow from '$lib/icon/left-arrow.svg?raw';
 	import Calendar from '$lib/components/common/calendar.svelte';
 	import Todo from '$lib/icon/todo.svg?raw';
+	import { onMount } from 'svelte';
+	import { client } from '$lib/utils';
+	import { userStore } from '$lib/stores/user-store';
+	import TimetableRow from './timetable-row.svelte';
+	import type { TaskDto } from '$lib/utils/client';
+	import { DateTime } from 'luxon';
 
 	const scrollDate = (side: 'left' | 'right') => {
 		scheduleStore.update((s) => ({
@@ -18,6 +24,49 @@
 			isTasksOpen: !$scheduleStore.isTasksOpen
 		}));
 	};
+
+	let tasksMap = $derived(() => {
+		const resMap: Map<number, TaskDto[]> = new Map();
+		for (let i = 0; i < 24; i++) {
+			for (const task of $scheduleStore.tasks) {
+				const taskTimeStart = DateTime.fromISO(task.start).hour;
+				const taskTimeFinish = DateTime.fromISO(task.finish).hour;
+
+				if (
+					taskTimeStart === i ||
+					(taskTimeStart < i && taskTimeFinish > i) ||
+					taskTimeFinish === i
+				) {
+					const existingTask = resMap.get(i);
+					if (!existingTask) {
+						resMap.set(i, [task]);
+					} else {
+						resMap.set(i, [...existingTask, task]);
+					}
+				}
+			}
+		}
+		return resMap;
+	});
+
+	let currentDate = $state($scheduleStore.date);
+
+	$effect(() => {
+		$scheduleStore.date;
+		if (currentDate !== $scheduleStore.date) {
+			client.task
+				.taskControllerGetTasksByDate({
+					date: $scheduleStore.date.toISODate()
+				})
+				.then((res) => {
+					scheduleStore.update((s) => ({
+						...s,
+						tasks: res
+					}));
+				});
+			currentDate = $scheduleStore.date;
+		}
+	});
 </script>
 
 <div class="flex h-full w-full flex-col gap-4 md:w-1/2 md:gap-4">
@@ -55,6 +104,8 @@
 			<div class="mr-2 flex w-full items-center justify-between text-lg md:mr-12">
 				<p class="text-secondary_contrast font-semibold">0</p>
 				<div class="bg-secondary_contrast h-1.5 w-1.5 rounded-full md:h-2 md:w-2"></div>
+				<p class="text-secondary_contrast font-semibold">10</p>
+				<div class="bg-secondary_contrast h-1.5 w-1.5 rounded-full md:h-2 md:w-2"></div>
 				<p class="text-secondary_contrast font-semibold">20</p>
 				<div class="bg-secondary_contrast h-1.5 w-1.5 rounded-full md:h-2 md:w-2"></div>
 				<p class="text-secondary_contrast font-semibold">30</p>
@@ -69,10 +120,7 @@
 		<div class="scrollbar h-7/8 w-full overflow-y-scroll">
 			<div class="flex flex-col gap-6">
 				{#each { length: 24 }, row}
-					<div class="flex items-center justify-center gap-4">
-						<p class="text-neutral w-20 text-lg font-semibold">{`${row + 1}:00`}</p>
-						<div class="bg-accent mr-2 h-8 w-full rounded-md md:mr-8"></div>
-					</div>
+					<TimetableRow {row} tasks={tasksMap().get(row)}></TimetableRow>
 				{/each}
 			</div>
 		</div>

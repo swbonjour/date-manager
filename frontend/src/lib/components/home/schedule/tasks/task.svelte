@@ -1,14 +1,12 @@
 <script lang="ts">
-	import { ActivityTypeTranslation } from '$lib/enums/enum';
+	import { ActivityTypeColors, ActivityTypeTranslation } from '$lib/enums/enum';
 	import Edit from '$lib/icon/edit.svg?raw';
-	import type { ActivityTypeEnum } from '$lib/utils/client';
+	import { scheduleStore } from '$lib/stores/schedule-store';
+	import type { ActivityTypeEnum, TaskDto } from '$lib/utils/client';
+	import { DateTime } from 'luxon';
 	import { onMount } from 'svelte';
 
-	let {
-		time,
-		type,
-		label
-	}: { time: { start: string; finish: string }; type: ActivityTypeEnum; label: string } = $props();
+	let { task }: { task: TaskDto } = $props();
 
 	let labelToDisplay = $state('');
 
@@ -19,7 +17,15 @@
 		} else if (window.innerWidth >= 1280) {
 			trimLength = 8;
 		}
-		if (label.length > trimLength) labelToDisplay = label.slice(0, trimLength) + '...';
+		if (task.label.length > trimLength) labelToDisplay = task.label.slice(0, trimLength) + '...';
+	};
+
+	const toggleEdit = () => {
+		scheduleStore.update((s) => ({
+			...s,
+			isTasksModalOpen: !$scheduleStore.isTasksModalOpen,
+			selectedTask: task
+		}));
 	};
 
 	onMount(() => {
@@ -32,19 +38,22 @@
 
 <div class="flex h-14 items-center justify-between gap-8 lg:w-full">
 	<div class="flex h-full flex-col items-center justify-between">
-		<p class="text-md text-secondary_contrast">{time.start}</p>
+		<p class="text-md text-secondary_contrast">{DateTime.fromISO(task.start).toFormat('HH:mm')}</p>
 		<div class="bg-secondary_contrast h-0.5 w-full"></div>
-		<p class="text-md text-secondary_contrast">{time.finish}</p>
+		<p class="text-md text-secondary_contrast">{DateTime.fromISO(task.finish).toFormat('HH:mm')}</p>
 	</div>
 	<div class="flex h-full w-full flex-col items-start justify-between">
-		<div class="text-secondary bg-accent rounded-xl pt-0.5 pr-2 pb-0.5 pl-2 text-xs">
-			{ActivityTypeTranslation[type]}
+		<div
+			class="text-secondary rounded-xl pt-0.5 pr-2 pb-0.5 pl-2 text-xs"
+			style="background-color: {ActivityTypeColors[task.type]};"
+		>
+			{ActivityTypeTranslation[task.type]}
 		</div>
 		<p
 			class="text-md text-neutral w-40 overflow-hidden font-semibold text-ellipsis xl:w-20 2xl:w-40"
 		>
-			{label}
+			{task.label}
 		</p>
 	</div>
-	<button class="fill-accent hover:cursor-pointer">{@html Edit}</button>
+	<button class="fill-accent hover:cursor-pointer" onclick={toggleEdit}>{@html Edit}</button>
 </div>

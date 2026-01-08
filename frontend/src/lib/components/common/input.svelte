@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { ThemesName } from '$lib/utils/themes';
 	import type { HTMLInputAttributes } from 'svelte/elements';
 
 	let {
@@ -12,6 +13,10 @@
 		onInput?: () => void;
 		isErr?: boolean;
 	} = $props();
+
+	let isThemeDark = localStorage
+		? localStorage.getItem('theme') === ThemesName.DARK
+		: ThemesName.LIGHT;
 </script>
 
 <input
@@ -19,7 +24,8 @@
 	bind:value
 	class={[
 		'text-neutral w-full border-b outline-0 outline-transparent',
-		isErr ? 'border-red-600' : ''
+		isErr ? 'border-red-600' : '',
+		isThemeDark ? 'input-c-dark' : ''
 	]}
 	oninput={() => {
 		isErr = false;
@@ -28,3 +34,9 @@
 		}
 	}}
 />
+
+<style>
+	.input-c-dark {
+		color-scheme: dark;
+	}
+</style>

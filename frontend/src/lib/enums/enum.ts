@@ -15,3 +15,11 @@ export const ActivityTypeTranslation = {
 	[ActivityTypeEnum.WORK]: 'Работа',
 	[ActivityTypeEnum.EDUCATION]: 'Образование'
 };
+
+export const ActivityTypeColors = {
+	[ActivityTypeEnum.ENTERTAINMENT]: '#FF7DA9',
+	[ActivityTypeEnum.HOBBY]: '#FF9A5A',
+	[ActivityTypeEnum.SPORT]: '#6FEE95',
+	[ActivityTypeEnum.WORK]: '#8858FF',
+	[ActivityTypeEnum.EDUCATION]: '#50CAFF'
+};

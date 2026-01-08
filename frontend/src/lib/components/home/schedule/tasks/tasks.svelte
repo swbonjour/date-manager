@@ -2,6 +2,7 @@
 	import Plus from '$lib/icon/plus.svg?raw';
 	import { scheduleStore } from '$lib/stores/schedule-store';
 	import { ActivityTypeEnum } from '$lib/utils/client';
+	import { DateTime } from 'luxon';
 	import TaskEdit from './task-edit.svelte';
 	import Task from './task.svelte';
 
@@ -11,6 +12,20 @@
 			isTasksOpen: !$scheduleStore.isTasksOpen
 		}));
 	};
+
+	const toggleEdit = () => {
+		scheduleStore.update((s) => ({
+			...s,
+			isTasksModalOpen: !$scheduleStore.isTasksModalOpen,
+			selectedTask: undefined
+		}));
+	};
+
+	const sortedTasks = $derived(
+		$scheduleStore.tasks.sort(
+			(a, b) => DateTime.fromISO(a.start).valueOf() - DateTime.fromISO(b.start).valueOf()
+		)
+	);
 </script>
 
 {#if $scheduleStore.isTasksOpen}
@@ -22,6 +37,7 @@
 			<div class="flex gap-8">
 				<button
 					class="bg-secondary text-neutral fill-neutral text-md flex h-10 items-center justify-between gap-2 rounded-md p-2 hover:cursor-pointer"
+					onclick={toggleEdit}
 					><p class="max-md:hidden">Создать</p>
 					{@html Plus}</button
 				>
@@ -34,12 +50,8 @@
 			</div>
 		</div>
 		<div class="scrollbar mt-8 flex h-7/8 w-full flex-col gap-4 overflow-auto pr-8">
-			{#each { length: 20 } as tasks}
-				<Task
-					time={{ start: '9:00', finish: '10:00' }}
-					type={ActivityTypeEnum.WORK}
-					label={'TestTestTestTestTestTestTestTestTest'}
-				></Task>
+			{#each sortedTasks as task}
+				<Task {task}></Task>
 			{/each}
 		</div>
 	</div>
