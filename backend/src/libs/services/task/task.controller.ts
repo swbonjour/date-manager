@@ -47,8 +47,11 @@ export class TaskController {
 
   @Patch('/update')
   @ApiResponse({ type: TaskDto })
-  async updateTask(@Body() dto: TaskUpdateDto): Promise<TaskDto> {
-    return await this.taskService.updateTask(dto);
+  async updateTask(
+    @Body() dto: TaskUpdateDto,
+    @AuthUser() user: AuthTokenData,
+  ): Promise<TaskDto> {
+    return await this.taskService.updateTask({ ...dto, user_id: user._id });
   }
 
   @Delete('/delete/:_id')

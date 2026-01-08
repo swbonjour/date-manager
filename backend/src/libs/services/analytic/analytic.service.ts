@@ -33,7 +33,7 @@ export class AnalyticService {
     const userTasks = await this.manager.find(TaskEntity, {
       where: {
         date: DateTime.fromISO(dto.date).startOf('day').toISODate()!,
-        user_id: dto.user._id,
+        user_id: dto.user_id,
       },
     });
 
@@ -55,7 +55,7 @@ export class AnalyticService {
     await this.manager.upsert(
       AnalyticEntity,
       {
-        user_id: dto.user._id,
+        user_id: dto.user_id,
         schedule_busy_minutes: busyMinutes,
         date: DateTime.fromISO(dto.date).startOf('day').toISODate()!,
       },

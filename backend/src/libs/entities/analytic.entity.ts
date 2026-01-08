@@ -4,7 +4,6 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { UserEntity } from './user.entity';
@@ -15,7 +14,7 @@ export class AnalyticEntity {
   @PrimaryGeneratedColumn('uuid')
   _id!: string;
 
-  @Column('numeric', { nullable: false })
+  @Column('integer', { nullable: false })
   schedule_busy_minutes!: number;
 
   @Column({ type: 'date', nullable: false })

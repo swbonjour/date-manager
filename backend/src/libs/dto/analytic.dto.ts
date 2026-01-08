@@ -3,7 +3,7 @@ import { AuthTokenData } from './auth.dto';
 import { IsDateString, IsISO8601, IsNumber, IsOptional } from 'class-validator';
 
 export class AnalyticScheduleBusyDto {
-  user!: AuthTokenData;
+  user_id!: string;
 
   @ApiProperty({ type: String })
   @IsDateString()

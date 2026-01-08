@@ -10,10 +10,14 @@ import {
 } from 'src/libs/dto/task.dto';
 import { TaskEntity } from 'src/libs/entities/task.entity';
 import { EntityManager } from 'typeorm';
+import { AnalyticService } from '../analytic/analytic.service';
 
 @Injectable()
 export class TaskService {
-  constructor(private readonly manager: EntityManager) {}
+  constructor(
+    private readonly manager: EntityManager,
+    private readonly analyticService: AnalyticService,
+  ) {}
 
   public async getTasksByDate(dto: TaskGetByDateDto): Promise<TaskEntity[]> {
     return await this.manager.findBy(TaskEntity, {
@@ -62,6 +66,11 @@ export class TaskService {
 
     try {
       await this.manager.insert(TaskEntity, newTask);
+
+      await this.analyticService.calculateScheduleBusyAnalytic({
+        date: dto.date,
+        user_id: dto.user_id,
+      });
 
       return {
         ...newTask,
@@ -126,7 +135,10 @@ export class TaskService {
         where: { _id: dto._id },
       });
 
-      console.log(updatedTask);
+      await this.analyticService.calculateScheduleBusyAnalytic({
+        date: dto.date,
+        user_id: dto.user_id,
+      });
 
       return {
         ...updatedTask,
