@@ -32,11 +32,12 @@
 		Settings.defaultZone = $userStore.timezone;
 		$scheduleStore.init();
 		window.addEventListener('resize', () => {
-			const isTasksOpen = window.innerWidth > 768;
+			const isItemsOpen = window.innerWidth > 768;
 
 			scheduleStore.update((s) => ({
 				...s,
-				isTasksOpen: isTasksOpen
+				isTasksOpen: isItemsOpen,
+				isDashboardOpen: isItemsOpen
 			}));
 		});
 		await isAuthenticated();

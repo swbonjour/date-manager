@@ -28,6 +28,20 @@
 		}));
 	};
 
+	const hoverTask = (taskId: string) => {
+		scheduleStore.update((s) => ({
+			...s,
+			hoveredTask: taskId
+		}));
+	};
+
+	const unhoverTask = () => {
+		scheduleStore.update((s) => ({
+			...s,
+			hoveredTask: undefined
+		}));
+	};
+
 	onMount(() => {
 		trimLabel();
 		window.addEventListener('resize', () => {
@@ -36,7 +50,16 @@
 	});
 </script>
 
-<div class="flex h-14 items-center justify-between gap-8 lg:w-full">
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<!-- svelte-ignore a11y_mouse_events_have_key_events -->
+<div
+	class={[
+		'flex h-14 items-center justify-between gap-8 transition-all duration-75 lg:w-full',
+		task._id === $scheduleStore.hoveredTask ? 'border-secondary_contrast border-b-2' : ''
+	]}
+	onmouseover={() => hoverTask(task._id)}
+	onmouseleave={() => unhoverTask()}
+>
 	<div class="flex h-full flex-col items-center justify-between">
 		<p class="text-md text-secondary_contrast">{DateTime.fromISO(task.start).toFormat('HH:mm')}</p>
 		<div class="bg-secondary_contrast h-0.5 w-full"></div>

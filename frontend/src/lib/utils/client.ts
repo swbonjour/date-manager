@@ -78,15 +78,6 @@ export interface AnalyticScheduleBusyGetResponse {
   schedule_busy_minutes?: number;
 }
 
-export interface AnalyticScheduleBusyDto {
-  date: string;
-}
-
-export interface AnalyticScheduleBusyResponseDto {
-  schedule_busy_minutes: number;
-  date: string;
-}
-
 export interface AuthControllerSignInParams {
   email: string;
   password: string;
@@ -449,26 +440,6 @@ export class SchedlyApi<
       this.request<AnalyticScheduleBusyGetResponse, any>({
         path: `/analytic/calculate-schedule-busy/${date}`,
         method: "GET",
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags Analytic
-     * @name AnalyticControllerCalculateScheduleBusyAnalytic
-     * @request POST:/analytic/calculate-schedule-busy/calc
-     */
-    analyticControllerCalculateScheduleBusyAnalytic: (
-      data: AnalyticScheduleBusyDto,
-      params: RequestParams = {},
-    ) =>
-      this.request<AnalyticScheduleBusyResponseDto, any>({
-        path: `/analytic/calculate-schedule-busy/calc`,
-        method: "POST",
-        body: data,
-        type: ContentType.Json,
         format: "json",
         ...params,
       }),

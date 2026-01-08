@@ -102,6 +102,12 @@
 			}));
 		}
 
+		const analyticsData = await client.analytic.analyticControllerGetScheduleBusyAnalytic({
+			date: $scheduleStore.date.toISODate()
+		});
+
+		$scheduleStore.scheduleBusyMinutes = analyticsData.schedule_busy_minutes || 0;
+
 		label = '';
 		description = '';
 	};

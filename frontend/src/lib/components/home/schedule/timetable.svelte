@@ -10,6 +10,7 @@
 	import TimetableRow from './timetable-row.svelte';
 	import type { TaskDto } from '$lib/utils/client';
 	import { DateTime } from 'luxon';
+	import Dashboard from '$lib/icon/dashboard.svg?raw';
 
 	const scrollDate = (side: 'left' | 'right') => {
 		scheduleStore.update((s) => ({
@@ -22,6 +23,13 @@
 		scheduleStore.update((s) => ({
 			...s,
 			isTasksOpen: !$scheduleStore.isTasksOpen
+		}));
+	};
+
+	const toggleDashboard = () => {
+		scheduleStore.update((s) => ({
+			...s,
+			isDashboardOpen: !$scheduleStore.isDashboardOpen
 		}));
 	};
 
@@ -50,10 +58,14 @@
 	});
 
 	let currentDate = $state($scheduleStore.date);
+	let isTasksLoaded = $state(false);
 
 	$effect(() => {
 		$scheduleStore.date;
-		if (currentDate !== $scheduleStore.date) {
+		if (!$userStore.id) {
+			return;
+		}
+		if (currentDate !== $scheduleStore.date || !isTasksLoaded) {
 			client.task
 				.taskControllerGetTasksByDate({
 					date: $scheduleStore.date.toISODate()
@@ -64,6 +76,7 @@
 						tasks: res
 					}));
 				});
+			isTasksLoaded = true;
 			currentDate = $scheduleStore.date;
 		}
 	});
@@ -74,6 +87,10 @@
 		class="bg-primary flex min-h-14 w-full items-center justify-center rounded-br-xl rounded-bl-xl md:justify-between md:rounded-xl md:pl-8"
 	>
 		<div class="text-neutral flex w-fit items-center justify-between gap-4">
+			<button
+				class="fill-neutral absolute left-8 hover:cursor-pointer md:hidden"
+				onclick={toggleDashboard}>{@html Dashboard}</button
+			>
 			<button class="fill-accent hover:cursor-pointer" onclick={() => scrollDate('left')}
 				>{@html LeftArrow}</button
 			>
