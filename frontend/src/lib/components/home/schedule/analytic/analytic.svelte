@@ -21,7 +21,10 @@
 		if (!$userStore.id) {
 			return;
 		}
-		if (currentDate !== $scheduleStore.date || !isAnalyticsInitialized) {
+		if (
+			currentDate.toFormat('dd-MM-y') !== $scheduleStore.date.toFormat('dd-MM-y') ||
+			!isAnalyticsInitialized
+		) {
 			client.analytic
 				.analyticControllerGetScheduleBusyAnalytic({ date: $scheduleStore.date.toISODate() })
 				.then((res) => {

@@ -22,6 +22,8 @@ export class AuthSignUpDto {
   @ApiProperty({ type: String })
   @IsString()
   timezone!: string;
+
+  file?: Express.Multer.File;
 }
 
 export class AuthSignUpResponse {

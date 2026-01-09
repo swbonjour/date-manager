@@ -294,7 +294,7 @@ export class SchedlyApi<
         path: `/auth/signup`,
         method: "POST",
         body: data,
-        type: ContentType.Json,
+        type: ContentType.FormData,
         format: "json",
         ...params,
       }),
@@ -345,6 +345,21 @@ export class SchedlyApi<
         path: `/user`,
         method: "GET",
         format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags User
+     * @name UserControllerGetProfileImg
+     * @request GET:/user/img
+     */
+    userControllerGetProfileImg: (params: RequestParams = {}) =>
+      this.request<File, any>({
+        path: `/user/img`,
+        method: "GET",
+        format: "blob",
         ...params,
       }),
   };

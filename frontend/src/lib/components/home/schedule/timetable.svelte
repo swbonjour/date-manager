@@ -65,7 +65,10 @@
 		if (!$userStore.id) {
 			return;
 		}
-		if (currentDate !== $scheduleStore.date || !isTasksLoaded) {
+		if (
+			currentDate.toFormat('dd-MM-y') !== $scheduleStore.date.toFormat('dd-MM-y') ||
+			!isTasksLoaded
+		) {
 			client.task
 				.taskControllerGetTasksByDate({
 					date: $scheduleStore.date.toISODate()

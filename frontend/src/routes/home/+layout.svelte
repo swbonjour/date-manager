@@ -1,6 +1,8 @@
 <script lang="ts">
 	import Header from '$lib/components/home/layout/header.svelte';
 	import Menu from '$lib/components/home/layout/menu.svelte';
+	import { userStore } from '$lib/stores/user-store';
+	import { onMount } from 'svelte';
 
 	let { children } = $props();
 </script>

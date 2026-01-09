@@ -22,3 +22,7 @@ export const activityTypes: ActivityTypeEnum[] = [
 	ActivityTypeEnum.SPORT,
 	ActivityTypeEnum.WORK
 ];
+
+export const getFileSize = (file: File) => {
+	return file.size / 1024 / 1024;
+};

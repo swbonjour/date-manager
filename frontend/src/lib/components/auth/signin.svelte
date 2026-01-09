@@ -42,6 +42,18 @@
 			Settings.defaultLocale = 'ru';
 			Settings.defaultZone = $userStore.timezone;
 			$scheduleStore.init();
+			window.addEventListener('resize', () => {
+				const isItemsOpen = window.innerWidth > 768;
+
+				scheduleStore.update((s) => ({
+					...s,
+					isTasksOpen: isItemsOpen,
+					isDashboardOpen: isItemsOpen
+				}));
+			});
+			if ($userStore.id) {
+				await $userStore.getProfileImg();
+			}
 			goto('/home/schedule');
 		}
 	};
@@ -67,12 +79,16 @@
 		</div>
 
 		<button
-			class="bg-neutral text-primary h-12 cursor-pointer rounded-lg text-lg font-medium"
+			class="bg-neutral text-primary hover:bg-accent hover:text-neutral h-12
+			cursor-pointer rounded-lg text-lg font-medium transition-all duration-200"
 			onclick={signIn}>Войти</button
 		>
 		<div class="flex flex-wrap items-center justify-center gap-2">
 			<p class="text-neutral mb-2 font-medium">Ещё нет аккаунта?</p>
-			<button class="text-accent mb-2 cursor-pointer font-medium" onclick={changeToSignup}>
+			<button
+				class="text-accent border-primary hover:border-b-accent mb-2 cursor-pointer border-b-2 font-medium transition-all duration-200 hover:border-b-2"
+				onclick={changeToSignup}
+			>
 				Зарегистрироваться
 			</button>
 		</div>

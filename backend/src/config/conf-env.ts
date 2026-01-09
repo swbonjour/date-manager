@@ -10,6 +10,8 @@ export interface ConfigEnv {
   jwt_secret: string;
 
   is_dev: boolean;
+
+  file_size: number;
 }
 
 export const config = () =>
@@ -22,4 +24,5 @@ export const config = () =>
     db_name: process.env.DB_NAME || '',
     jwt_secret: process.env.JWT_SECRET || '',
     is_dev: Boolean(Number(process.env.IS_DEV)) || true,
+    file_size: Number(process.env.FILE_SIZE) || 0,
   }) satisfies ConfigEnv;

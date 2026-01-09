@@ -19,9 +19,7 @@
 				}
 			})
 			.catch(() => {
-				if (!page.url.href.includes('/auth')) {
-					goto('/auth');
-				}
+				goto('/auth');
 			});
 	};
 
@@ -29,18 +27,22 @@
 		$themeStore.init();
 		$userStore.init();
 		Settings.defaultLocale = 'ru';
-		Settings.defaultZone = $userStore.timezone;
-		$scheduleStore.init();
-		window.addEventListener('resize', () => {
-			const isItemsOpen = window.innerWidth > 768;
+		Settings.defaultZone = $userStore.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone;
+		await isAuthenticated().then(async () => {
+			$scheduleStore.init();
+			window.addEventListener('resize', () => {
+				const isItemsOpen = window.innerWidth > 768;
 
-			scheduleStore.update((s) => ({
-				...s,
-				isTasksOpen: isItemsOpen,
-				isDashboardOpen: isItemsOpen
-			}));
+				scheduleStore.update((s) => ({
+					...s,
+					isTasksOpen: isItemsOpen,
+					isDashboardOpen: isItemsOpen
+				}));
+			});
+			if ($userStore.id) {
+				await $userStore.getProfileImg();
+			}
 		});
-		await isAuthenticated();
 	});
 </script>
 

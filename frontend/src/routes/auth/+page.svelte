@@ -8,7 +8,7 @@
 
 <div class="bg-secondary flex h-screen w-screen items-center justify-center">
 	<div
-		class="bg-primary flex h-full w-full flex-col items-center justify-center rounded-2xl shadow-xl md:h-3/4 md:w-1/3"
+		class="bg-primary flex h-full w-full flex-col items-center justify-center shadow-xl md:h-3/4 md:w-3/7 md:rounded-2xl xl:w-1/3"
 	>
 		<div class="flex w-3/4 items-center pt-8 md:w-full md:pl-8">
 			<div class="fill-neutral">{@html Logo}</div>

@@ -11,12 +11,16 @@ import { UserEntity } from '../../entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
 import { DateTime } from 'luxon';
+import { FileStorage, StorageFolder } from 'src/utils/storage';
+import { ConfigService } from '@nestjs/config';
+import { ConfigEnv } from 'src/config/conf-env';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly manager: EntityManager,
     private readonly jwtService: JwtService,
+    private readonly configService: ConfigService<ConfigEnv>,
   ) {}
 
   public async signUp(dto: AuthSignUpDto): Promise<AuthSignUpResponse> {
@@ -42,6 +46,11 @@ export class AuthService {
     });
 
     await this.manager.insert(UserEntity, user);
+
+    if (dto.file) {
+      const fileStorage = new FileStorage(this.configService);
+      await fileStorage.saveFile(dto.file, user._id, StorageFolder.PROFILE);
+    }
 
     const authToken = await this.jwtService.signAsync({
       _id: user._id,

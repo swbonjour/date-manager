@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 import * as jwt from 'jwt-decode';
-import { setHeader } from '$lib/utils';
+import { client, setHeader } from '$lib/utils';
 
 interface AuthTokenData {
 	_id: string;
@@ -12,7 +12,18 @@ export const userStore = writable({
 	id: '',
 	email: '',
 	timezone: '',
+	profileImg: '',
 	usersMap: new Map(),
+	getProfileImg: async () => {
+		const profileImg = await client.user.userControllerGetProfileImg();
+		const profileImgURL = URL.createObjectURL(profileImg);
+		userStore.update((u) => {
+			return {
+				...u,
+				profileImg: profileImgURL
+			};
+		});
+	},
 	init: (authToken?: string) => {
 		userStore.update((u) => {
 			if (authToken) {
