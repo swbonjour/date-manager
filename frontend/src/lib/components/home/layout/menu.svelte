@@ -15,12 +15,12 @@
 
 	let selectedMenuItem = $state<MenuItem>(MenuItem.SCHEDULE);
 
-	let isMenuOpen = $state(true);
+	let isMenuOpen = $state(false);
 	let touchStart = $state(0);
 	let touchEnd = $state(0);
 	const touchDiff = $derived(touchEnd - touchStart);
 
-	let isProfileMenuOpen = $state(true);
+	let isProfileMenuOpen = $state(false);
 
 	const selectMenuItem = (menuItem: MenuItem) => {
 		selectedMenuItem = menuItem;

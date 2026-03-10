@@ -33,6 +33,8 @@
 	let description = $state<string | null | undefined>('');
 
 	const toggleTasksModal = (e: MouseEvent, force?: boolean) => {
+		e.stopPropagation();
+
 		const target = e.target as HTMLElement;
 
 		if (!target.classList.contains('modal-bg') && !force) {

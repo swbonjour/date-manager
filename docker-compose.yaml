@@ -38,6 +38,8 @@ services:
       - DB_NAME=date_manager
 
       - JWT_SECRET=change
+
+      - FILE_SIZE=1048576
     depends_on:
       postgres:
         condition: service_healthy
