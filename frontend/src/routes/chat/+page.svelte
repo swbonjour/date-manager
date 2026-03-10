@@ -1,65 +1,65 @@
 <script lang="ts">
-	import { initSocket, messages, sendGlobalMessage } from '$lib/utils/socket';
-	import Button from '$lib/components/button.svelte';
-	import { userStore } from '$lib/stores/user-store';
-	import { onMount } from 'svelte';
-	import { client } from '$lib/utils';
+	// import { initSocket, messages, sendGlobalMessage } from '$lib/utils/socket';
+	// import Button from '$lib/components/button.svelte';
+	// import { userStore } from '$lib/stores/user-store';
+	// import { onMount } from 'svelte';
+	// import { client } from '$lib/utils';
 
-	let chats = $state<{ id: string; login: string }[]>();
+	// let chats = $state<{ id: string; login: string }[]>();
 
-	let message = $state('');
-	let selectedChat = $state('');
-	let isGlobalSelected = $state(false);
-	let componentMessages = $state<
-		{ id: string; message: string; type: string; create_at: number }[]
-	>([]);
-	let chatType = '';
+	// let message = $state('');
+	// let selectedChat = $state('');
+	// let isGlobalSelected = $state(false);
+	// let componentMessages = $state<
+	// 	{ id: string; message: string; type: string; create_at: number }[]
+	// >([]);
+	// let chatType = '';
 
-	messages.subscribe((item) => {
-		componentMessages = item
-			.filter((item) => item.type === chatType)
-			.sort((a, b) => a.create_at - b.create_at);
-	});
+	// messages.subscribe((item) => {
+	// 	componentMessages = item
+	// 		.filter((item) => item.type === chatType)
+	// 		.sort((a, b) => a.create_at - b.create_at);
+	// });
 
-	const selectChat = (_id: string) => {
-		selectedChat = _id;
-		isGlobalSelected = false;
-		chatType = _id;
-		componentMessages = $messages
-			.filter((item) => item.type === chatType)
-			.sort((a, b) => a.create_at - b.create_at);
-	};
+	// const selectChat = (_id: string) => {
+	// 	selectedChat = _id;
+	// 	isGlobalSelected = false;
+	// 	chatType = _id;
+	// 	componentMessages = $messages
+	// 		.filter((item) => item.type === chatType)
+	// 		.sort((a, b) => a.create_at - b.create_at);
+	// };
 
-	const selectGlobalChat = () => {
-		isGlobalSelected = true;
-		selectedChat = '';
-		chatType = 'global';
-		componentMessages = $messages
-			.filter((item) => item.type === chatType)
-			.sort((a, b) => a.create_at - b.create_at);
-	};
+	// const selectGlobalChat = () => {
+	// 	isGlobalSelected = true;
+	// 	selectedChat = '';
+	// 	chatType = 'global';
+	// 	componentMessages = $messages
+	// 		.filter((item) => item.type === chatType)
+	// 		.sort((a, b) => a.create_at - b.create_at);
+	// };
 
-	const getChats = async (): Promise<{ _id: string; login: string }[]> => {
-		return await client.user.userControllerGetAllUsers();
-	};
+	// const getChats = async (): Promise<{ _id: string; login: string }[]> => {
+	// 	return await client.user.userControllerGetAllUsers();
+	// };
 
-	const sendMessageToGlobalChat = () => {
-		sendGlobalMessage($userStore.id, message);
-	};
+	// const sendMessageToGlobalChat = () => {
+	// 	sendGlobalMessage($userStore.id, message);
+	// };
 
-	onMount(async () => {
-		initSocket();
-		chats = await getChats();
-		const chatsMap = new Map();
-		for (const item of chats) {
-			chatsMap.set(item.id, item.login);
-		}
-		userStore.update((u) => ({ ...u, usersMap: chatsMap }));
-	});
+	// onMount(async () => {
+	// 	initSocket();
+	// 	chats = await getChats();
+	// 	const chatsMap = new Map();
+	// 	for (const item of chats) {
+	// 		chatsMap.set(item.id, item.login);
+	// 	}
+	// 	userStore.update((u) => ({ ...u, usersMap: chatsMap }));
+	// });
 </script>
 
 <div class="chat_page">
-	<div class="chat">
+	<!-- <div class="chat">
 		<div class="chat_chats">
 			<div
 				class={['chat_chats-item', isGlobalSelected ? 'chat_chats-item-active' : '']}
@@ -109,7 +109,7 @@
 				/>
 			</div>
 		</div>
-	</div>
+	</div> -->
 </div>
 
 <style>
