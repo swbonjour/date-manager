@@ -52,7 +52,7 @@ services:
     ports:
       - "80:80"
     environment:
-      - VITE_PUBLIC_HTTP_SERVER_URL=http://212.67.11.211:3000
+      - VITE_PUBLIC_HTTP_SERVER_URL=http://109.69.21.83/api
       - VITE_IS_DEV=0
     depends_on:
       - backend
