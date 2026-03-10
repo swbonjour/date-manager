@@ -70,6 +70,11 @@ export class FileStorage {
 
     const filePath = path.join(dirPath, file.name);
 
-    return await fs.readFile(filePath);
+    const fileSplitted = file.name.split('.');
+
+    return {
+      buffer: await fs.readFile(filePath),
+      type: fileSplitted[fileSplitted.length - 1],
+    };
   }
 }

@@ -1,5 +1,5 @@
-import { Controller, Get, Res } from '@nestjs/common';
-import { GetAllUsersResponse, GetProfileImgResponse } from '../../dto/user.dto';
+import { Controller, Get, Param, ParseUUIDPipe, Res } from '@nestjs/common';
+import { GetAllUsersResponse, GetUserByIdResponse } from '../../dto/user.dto';
 import { ApiResponse } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { AuthUser } from 'src/libs/decorators/user.decorator';
@@ -16,17 +16,31 @@ export class UserController {
     return await this.userService.getAllUsers();
   }
 
-  @Get('img')
+  @Get('profile-img')
   @ApiResponse({
     content: { 'image/*': { schema: { type: 'string', format: 'binary' } } },
   })
   async getProfileImg(@AuthUser() user: AuthTokenData, @Res() res: Response) {
-    const buffer = await this.userService.getProfileImg({ user_id: user._id });
+    const fileData = await this.userService.getProfileImg({
+      user_id: user._id,
+    });
 
-    res.setHeader('Content-Type', 'image/jpeg');
-    res.setHeader('Content-Length', buffer?.byteLength || 0);
+    if (!fileData.buffer.byteLength) {
+      return res.send({});
+    }
+
+    res.setHeader('Content-Type', `image/${fileData.type}`);
+    res.setHeader('Content-Length', fileData.buffer.byteLength);
     res.setHeader('Cache-Control', 'public, max-age=86400');
 
-    return res.send(buffer);
+    return res.send(fileData.buffer);
+  }
+
+  @Get(':id')
+  @ApiResponse({ type: GetUserByIdResponse })
+  async getUserById(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+  ) {
+    return await this.userService.getUserById({ id: id });
   }
 }

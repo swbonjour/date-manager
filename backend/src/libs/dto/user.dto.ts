@@ -3,7 +3,7 @@ import { IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class GetAllUsersResponse {
   @ApiProperty({ type: String })
-  @IsString()
+  @IsUUID()
   _id!: string;
 
   @ApiProperty({ type: String })
@@ -22,4 +22,28 @@ export class GetProfileImgResponse {
   @IsString()
   @IsOptional()
   img?: Buffer<ArrayBufferLike>;
+}
+
+export class GetUserByIdDto {
+  @ApiProperty({ type: String })
+  @IsUUID()
+  id: string;
+}
+
+export class GetUserByIdResponse {
+  @ApiProperty({ type: String })
+  @IsUUID()
+  id: string;
+
+  @ApiProperty({ type: String })
+  @IsString()
+  name: string;
+
+  @ApiProperty({ type: String })
+  @IsString()
+  age: string;
+
+  @ApiProperty({ type: String })
+  @IsString()
+  email: string;
 }

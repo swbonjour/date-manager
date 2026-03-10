@@ -8,6 +8,11 @@ export enum MenuItem {
 	SCHEDULE = 'schedule'
 }
 
+export enum ProfileMenuItem {
+	PROFILE = 'profile',
+	SETTINGS = 'settings'
+}
+
 export const ActivityTypeTranslation = {
 	[ActivityTypeEnum.ENTERTAINMENT]: 'Развлечение',
 	[ActivityTypeEnum.HOBBY]: 'Хобби',
@@ -22,4 +27,12 @@ export const ActivityTypeColors = {
 	[ActivityTypeEnum.SPORT]: '#6FEE95',
 	[ActivityTypeEnum.WORK]: '#8858FF',
 	[ActivityTypeEnum.EDUCATION]: '#50CAFF'
+};
+
+export const AcitivityTypeDarkColors = {
+	[ActivityTypeEnum.ENTERTAINMENT]: '#ed4a80',
+	[ActivityTypeEnum.HOBBY]: '#ff8438',
+	[ActivityTypeEnum.SPORT]: '#4ae077',
+	[ActivityTypeEnum.WORK]: '#6732ed',
+	[ActivityTypeEnum.EDUCATION]: '#2caee5'
 };

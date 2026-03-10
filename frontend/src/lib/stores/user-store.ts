@@ -6,11 +6,13 @@ interface AuthTokenData {
 	_id: string;
 	email: string;
 	timezone: string;
+	name: string;
 }
 
 export const userStore = writable({
 	id: '',
 	email: '',
+	name: '',
 	timezone: '',
 	profileImg: '',
 	usersMap: new Map(),
@@ -36,7 +38,8 @@ export const userStore = writable({
 				...u,
 				id: authTokenData?._id || '',
 				email: authTokenData?.email || '',
-				timezone: authTokenData?.timezone || ''
+				timezone: authTokenData?.timezone || '',
+				name: authTokenData?.name || ''
 			};
 		});
 	}
@@ -49,5 +52,5 @@ const parseAuthToken = (): AuthTokenData | undefined => {
 	}
 	setHeader('Authorization', `Bearer ${authToken}`);
 	const decoded: AuthTokenData = jwt.jwtDecode(authToken);
-	return { _id: decoded._id, email: decoded.email, timezone: decoded.timezone };
+	return { _id: decoded._id, email: decoded.email, timezone: decoded.timezone, name: decoded.name };
 };

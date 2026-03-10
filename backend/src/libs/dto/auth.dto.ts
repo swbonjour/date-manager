@@ -70,4 +70,7 @@ export class AuthTokenData {
 
   @ApiProperty({ type: String })
   timezone!: string;
+
+  @ApiProperty({ type: String })
+  name!: string;
 }

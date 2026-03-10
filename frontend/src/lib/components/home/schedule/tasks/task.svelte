@@ -53,10 +53,10 @@
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <!-- svelte-ignore a11y_mouse_events_have_key_events -->
 <div
-	class={[
-		'flex h-14 items-center justify-between gap-8 transition-all duration-75 lg:w-full',
-		task._id === $scheduleStore.hoveredTask ? 'border-secondary_contrast border-b-2' : ''
-	]}
+	class="flex h-14 items-center justify-between gap-8 rounded-md transition-all duration-75 hover:cursor-pointer lg:w-full"
+	style={task._id === $scheduleStore.hoveredTask
+		? `box-shadow: 0px -20px 20px -20px ${ActivityTypeColors[task.type]} inset`
+		: ''}
 	onmouseover={() => hoverTask(task._id)}
 	onmouseleave={() => unhoverTask()}
 >

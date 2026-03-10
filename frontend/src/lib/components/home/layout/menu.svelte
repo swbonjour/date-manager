@@ -11,13 +11,16 @@
 	import Notice from '$lib/icon/notice.svg?raw';
 	import Sun from '$lib/icon/sun.svg?raw';
 	import { themeStore } from '$lib/stores/theme-store';
+	import { userStore } from '$lib/stores/user-store';
 
 	let selectedMenuItem = $state<MenuItem>(MenuItem.SCHEDULE);
 
-	let isMenuOpen = $state(false);
+	let isMenuOpen = $state(true);
 	let touchStart = $state(0);
 	let touchEnd = $state(0);
 	const touchDiff = $derived(touchEnd - touchStart);
+
+	let isProfileMenuOpen = $state(true);
 
 	const selectMenuItem = (menuItem: MenuItem) => {
 		selectedMenuItem = menuItem;
@@ -37,11 +40,25 @@
 			isMenuOpen = !isMenuOpen;
 		} else if (touchDiff < 0 && isMenuOpen) {
 			isMenuOpen = !isMenuOpen;
+			isProfileMenuOpen = false;
 		}
 	};
 
 	const toggleTheme = () => {
 		$themeStore.toggle();
+	};
+
+	const toggleProfileMenu = () => {
+		isProfileMenuOpen = !isProfileMenuOpen;
+	};
+
+	const gotoUserProfile = () => {
+		goto('/home/user');
+	};
+
+	const logout = () => {
+		localStorage.removeItem('auth-token');
+		goto('/auth');
 	};
 
 	onMount(() => {
@@ -116,6 +133,30 @@
 	<div class="mt-auto mb-4 flex flex-col items-center gap-8 md:hidden">
 		<button class="fill-neutral hover:cursor-pointer" onclick={toggleTheme}>{@html Sun}</button>
 		<button class="fill-neutral hover:cursor-pointer">{@html Notice}</button>
-		<div class="bg-secondary h-12 w-12 rounded-4xl hover:cursor-pointer"></div>
+		<div class="relative">
+			{#if !$userStore.profileImg}
+				<div class="bg-secondary h-12 w-12 rounded-4xl hover:cursor-pointer"></div>
+			{:else}
+				<button onclick={toggleProfileMenu}>
+					<img class="h-12 w-12 rounded-4xl" src={$userStore.profileImg} alt="img" />
+				</button>
+			{/if}
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
+			{#if isProfileMenuOpen}
+				<div
+					class="bg-secondary border-accent absolute -top-5 left-18 z-30 flex w-40 flex-col items-center justify-center overflow-hidden rounded-xl border-2"
+					onmouseleave={toggleProfileMenu}
+				>
+					<button
+						class="text-neutral text-md hover:bg-accent border-accent w-full cursor-pointer border-b-2 p-1 transition-all duration-200"
+						onclick={gotoUserProfile}>Профиль</button
+					>
+					<button
+						class="text-neutral text-md hover:bg-accent w-full cursor-pointer p-1 transition-all duration-200"
+						onclick={logout}>Выйти</button
+					>
+				</div>
+			{/if}
+		</div>
 	</div>
 </div>

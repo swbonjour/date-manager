@@ -1,6 +1,11 @@
 import { EntityManager } from 'typeorm';
 import { UserEntity } from '../../entities/user.entity';
-import { GetAllUsersResponse, GetProfileImgDto } from '../../dto/user.dto';
+import {
+  GetAllUsersResponse,
+  GetProfileImgDto,
+  GetUserByIdDto,
+  GetUserByIdResponse,
+} from '../../dto/user.dto';
 import { Injectable } from '@nestjs/common';
 import { FileStorage, StorageFolder } from 'src/utils/storage';
 import { ConfigService } from '@nestjs/config';
@@ -30,11 +35,27 @@ export class UserService {
       dto.user_id,
       StorageFolder.PROFILE,
     );
-    return Buffer.from(
-      profileImg!.buffer.slice(
-        profileImg!.byteOffset,
-        profileImg!.byteLength + profileImg!.byteLength,
-      ),
-    );
+    if (!profileImg) {
+      return { buffer: Buffer.from([]), type: '' };
+    }
+
+    return profileImg;
+  }
+
+  public async getUserById(
+    dto: GetUserByIdDto,
+  ): Promise<GetUserByIdResponse | null> {
+    const user = await this.manager.findOne(UserEntity, {
+      where: { _id: dto.id },
+    });
+
+    return user
+      ? {
+          id: user._id,
+          name: user.name,
+          age: user.age,
+          email: user.email,
+        }
+      : null;
   }
 }

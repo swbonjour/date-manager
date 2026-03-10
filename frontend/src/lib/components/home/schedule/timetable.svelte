@@ -111,13 +111,13 @@
 		</div>
 	</div>
 	<div
-		class="bg-primary min-h-0 w-full flex-1 flex-col rounded-tl-xl rounded-tr-xl p-8 md:rounded-xl"
+		class="bg-primary min-h-0 w-full flex-1 flex-col rounded-tl-xl rounded-tr-xl p-4 md:rounded-xl md:p-8"
 	>
-		<div class="flex h-16 w-full items-center justify-between gap-4">
+		<div class="flex h-16 w-full items-center justify-between md:gap-4">
 			<div class="relative flex w-20 text-sm">
 				<p class="text-secondary_contrast absolute top-0 xl:left-0">час</p>
-				<div class="bg-secondary_contrast absolute h-0.5 w-12 rotate-30"></div>
-				<p class="text-secondary_contrast absolute -top-5 right-2 md:right-0 lg:right-2 xl:right-4">
+				<div class="bg-secondary_contrast absolute h-0.5 w-10 rotate-30 md:w-12"></div>
+				<p class="text-secondary_contrast absolute -top-5 right-4 md:right-0 lg:right-2 xl:right-4">
 					мин
 				</p>
 			</div>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ActivityTypeColors } from '$lib/enums/enum';
+	import { AcitivityTypeDarkColors, ActivityTypeColors } from '$lib/enums/enum';
 	import { scheduleStore } from '$lib/stores/schedule-store';
 	import type { ActivityTypeEnum, TaskDto } from '$lib/utils/client';
 	import { DateTime } from 'luxon';
@@ -76,6 +76,7 @@
 
 		scheduleStore.update((s) => ({
 			...s,
+			isTasksOpen: window.innerWidth > 768 ? true : !$scheduleStore.isTasksOpen,
 			isTasksModalOpen: !$scheduleStore.isTasksModalOpen,
 			selectedTask: task
 		}));
@@ -101,19 +102,23 @@
 	});
 </script>
 
-<div class="flex items-center justify-center gap-4">
+<div class="flex items-center justify-center md:gap-4">
 	<p class="text-neutral w-20 text-lg font-semibold">{`${row}:00`}</p>
 	<div class="bg-secondary relative mr-2 h-8 w-full rounded-md md:mr-8">
 		{#each parsedTasks as task}
 			<!-- svelte-ignore a11y_mouse_events_have_key_events -->
 			<button
 				class={[
-					'shadow-neutral absolute top-0 h-full w-2 cursor-pointer rounded-md transition-all duration-75',
+					'shadow-neutral absolute top-0 h-full w-2 cursor-pointer rounded-md transition-shadow duration-75',
 					task._id === $scheduleStore.hoveredTask ? 'shadow-md' : ''
 				]}
-				style="left: {task.taskStartPadding}%; width: {task.taskPercentInHour}%; background-color: {ActivityTypeColors[
-					task.type
-				]}"
+				style={`left: ${task.taskStartPadding}%; width: ${task.taskPercentInHour}%; background-color: ${
+					ActivityTypeColors[task.type]
+				}; ${
+					task._id === $scheduleStore.hoveredTask
+						? `box-shadow: 0px 4px 4px 2px ${AcitivityTypeDarkColors[task.type]}`
+						: ''
+				}`}
 				onclick={() => toggleEdit(task._id)}
 				onmouseover={() => hoverTask(task._id)}
 				onmouseleave={() => unhoverTask()}

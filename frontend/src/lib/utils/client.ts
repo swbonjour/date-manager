@@ -45,6 +45,13 @@ export interface GetAllUsersResponse {
   name: string;
 }
 
+export interface GetUserByIdResponse {
+  id: string;
+  name: string;
+  age: string;
+  email: string;
+}
+
 export interface TaskDto {
   _id: string;
   label: string;
@@ -81,6 +88,10 @@ export interface AnalyticScheduleBusyGetResponse {
 export interface AuthControllerSignInParams {
   email: string;
   password: string;
+}
+
+export interface UserControllerGetUserByIdParams {
+  id: string;
 }
 
 export interface TaskControllerGetTasksByDateParams {
@@ -353,13 +364,31 @@ export class SchedlyApi<
      *
      * @tags User
      * @name UserControllerGetProfileImg
-     * @request GET:/user/img
+     * @request GET:/user/profile-img
      */
     userControllerGetProfileImg: (params: RequestParams = {}) =>
       this.request<File, any>({
-        path: `/user/img`,
+        path: `/user/profile-img`,
         method: "GET",
         format: "blob",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags User
+     * @name UserControllerGetUserById
+     * @request GET:/user/{id}
+     */
+    userControllerGetUserById: (
+      { id, ...query }: UserControllerGetUserByIdParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<GetUserByIdResponse, any>({
+        path: `/user/${id}`,
+        method: "GET",
+        format: "json",
         ...params,
       }),
   };

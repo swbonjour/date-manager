@@ -56,6 +56,7 @@ export class AuthService {
       _id: user._id,
       email: user.email,
       timezone: dto.timezone,
+      name: dto.name,
     });
 
     return { authToken };
@@ -86,6 +87,7 @@ export class AuthService {
       _id: user._id,
       email: dto.email,
       timezone: user.timezone,
+      name: user.name,
     };
 
     const authToken = await this.jwtService.signAsync(payload);

@@ -54,15 +54,15 @@ jobs:
       # Копирование файлов на сервер
       - name: Copy files to server
         run: |
-          scp -r frontend/ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/
-          scp -r backend/ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/
-          scp docker-compose.yaml ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/
+          scp -r frontend/ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/date-manager
+          scp -r backend/ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/date-manager
+          scp docker-compose.yaml ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/date-manager
 
       # Деплой на сервер
       - name: Deploy to server
         run: |
           ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "
-            cd /var/www/
+            cd /var/www/date-manager
             
             # Останавливаем старые контейнеры
             docker compose down

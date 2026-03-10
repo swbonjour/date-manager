@@ -1,13 +1,17 @@
 <script lang="ts">
 	import Input from '$lib/components/common/input.svelte';
-	import { ActivityTypeColors, ActivityTypeTranslation } from '$lib/enums/enum';
+	import {
+		AcitivityTypeDarkColors,
+		ActivityTypeColors,
+		ActivityTypeTranslation
+	} from '$lib/enums/enum';
 	import Category from '$lib/icon/categories.svg?raw';
 	import Description from '$lib/icon/description.svg?raw';
 	import Time from '$lib/icon/time.svg?raw';
 	import { scheduleStore } from '$lib/stores/schedule-store';
 	import { ActivityTypeEnum } from '$lib/utils/client';
 	import { DateTime } from 'luxon';
-	import Plus from '$lib/icon/plus.svg?raw';
+	import Close from '$lib/icon/close.svg?raw';
 	import { client } from '$lib/utils';
 
 	let label = $state('');
@@ -124,8 +128,8 @@
 			class="bg-primary flex h-full w-full flex-col items-start justify-around gap-6 p-8 md:h-5/6 md:w-3/4 md:gap-8 md:rounded-xl lg:w-2/6"
 		>
 			<button
-				class="fill-neutral h-0.5 rotate-45 cursor-pointer self-end"
-				onclick={(e) => toggleTasksModal(e, true)}>{@html Plus}</button
+				class="fill-neutral h-0.5 cursor-pointer self-end"
+				onclick={(e) => toggleTasksModal(e, true)}>{@html Close}</button
 			>
 			<input
 				placeholder="Добавьте название"
@@ -143,10 +147,9 @@
 					{#each activities as activity}
 						<div
 							class={[
-								'text-primary md:text-md min-w-20 cursor-pointer rounded-2xl p-1 text-center text-sm',
-								selectedActivityType === activity ? 'selected-activity-type' : ''
+								'text-primary md:text-md min-w-20 cursor-pointer rounded-2xl p-1 text-center text-sm'
 							]}
-							style="background-color: {ActivityTypeColors[activity]};"
+							style={`background-color: ${ActivityTypeColors[activity]}; ${selectedActivityType === activity ? `outline: 2px solid ${AcitivityTypeDarkColors[activity]};` : ''}`}
 							onclick={() => selectActivity(activity)}
 						>
 							{ActivityTypeTranslation[activity]}
@@ -205,9 +208,3 @@
 		</div>
 	</div>
 {/if}
-
-<style>
-	.selected-activity-type {
-		outline: 2px solid var(--color-neutral);
-	}
-</style>
