@@ -33,6 +33,10 @@
 	let description = $state<string | null | undefined>('');
 
 	const toggleTasksModal = (e: MouseEvent, force?: boolean) => {
+		if(window.innerWidth < 768) {
+			return;
+		}
+
 		const target = e.target as HTMLElement;
 
 		if (!target.classList.contains('modal-bg') && !force) {
@@ -121,12 +125,11 @@
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 {#if $scheduleStore.isTasksModalOpen}
 	<div
-		class="modal-bg absolute top-0 left-0 z-50 flex h-screen w-screen items-center justify-center bg-black/80"
+		class="modal-bg absolute top-0 left-0 z-50 flex h-full w-full items-center justify-center bg-black/80"
 		onclick={toggleTasksModal}
 	>
 		<div
 			class="bg-primary flex h-full w-full flex-col items-start justify-around gap-6 p-8 md:h-5/6 md:w-3/4 md:gap-8 md:rounded-xl lg:w-2/6"
-			onclick={(e) => e.stopPropagation()}
 		>
 			<button
 				class="fill-neutral h-0.5 cursor-pointer self-end"
