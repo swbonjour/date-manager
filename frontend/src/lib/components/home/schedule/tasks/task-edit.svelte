@@ -33,8 +33,6 @@
 	let description = $state<string | null | undefined>('');
 
 	const toggleTasksModal = (e: MouseEvent, force?: boolean) => {
-		e.stopPropagation();
-
 		const target = e.target as HTMLElement;
 
 		if (!target.classList.contains('modal-bg') && !force) {
@@ -128,6 +126,7 @@
 	>
 		<div
 			class="bg-primary flex h-full w-full flex-col items-start justify-around gap-6 p-8 md:h-5/6 md:w-3/4 md:gap-8 md:rounded-xl lg:w-2/6"
+			onclick={(e) => e.stopPropagation()}
 		>
 			<button
 				class="fill-neutral h-0.5 cursor-pointer self-end"
