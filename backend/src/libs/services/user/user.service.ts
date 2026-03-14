@@ -42,6 +42,10 @@ export class UserService {
     return profileImg;
   }
 
+  public async updateProfileImg() {
+    
+  }
+
   public async getUserById(
     dto: GetUserByIdDto,
   ): Promise<GetUserByIdResponse | null> {

@@ -3,18 +3,16 @@ services:
   postgres:
     image: postgres:18
     container_name: date-manager_pg
-    ports:
-      - '5432:5432'
     environment:
-      POSTGRES_DB: date_manager
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
     volumes:
       - postgres_data:/var/lib/postgresql
     networks:
       - app-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -25,21 +23,22 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     container_name: date-manager_backend
-    ports:
-      - "3000:3000"
+    expose:
+      - "3000"
     environment:
-      - PORT=3000
-      - IS_DEV=0
+      - PORT=${PORT}
 
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_USER=postgres
-      - DB_PASS=postgres
-      - DB_NAME=date_manager
+      - IS_DEV=${IS_DEV}
 
-      - JWT_SECRET=change
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - DB_NAME=${DB_NAME}
 
-      - FILE_SIZE=1048576
+      - JWT_SECRET=${JWT_SECRET}
+      
+      - FILE_SIZE=${FILE_SIZE}
     depends_on:
       postgres:
         condition: service_healthy
@@ -51,15 +50,42 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: date-manager_frontend
-    ports:
-      - "80:80"
+    expose:
+      - "80"
     environment:
-      - VITE_PUBLIC_HTTP_SERVER_URL=http://109.69.21.83/api
-      - VITE_IS_DEV=0
+      - VITE_PUBLIC_HTTP_SERVER_URL=${VITE_PUBLIC_HTTP_SERVER_URL}
+      - VITE_IS_DEV=${VITE_IS_DEV}
     depends_on:
       - backend
     networks:
       - app-network
+
+  nginx-proxy:
+    image: nginx:alpine
+    container_name: nginx-proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./ssl:/etc/nginx/ssl   # для сертификатов (если используем свои)
+      - ./certbot/www:/var/www/certbot   # для верификации Let's Encrypt
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - internal
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./ssl:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    networks:
+      - internal
 
 volumes:
   postgres_data:
