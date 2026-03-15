@@ -74,11 +74,11 @@
 </script>
 
 {#if isMenuOpen}
-	<div class="absolute z-40 h-screen w-screen bg-black opacity-80 transition-all md:hidden"></div>
+	<div class="absolute z-40 h-dvh w-screen bg-black opacity-80 transition-all md:hidden"></div>
 {/if}
 <div
 	class={[
-		'bg-primary absolute top-0 z-50 flex h-screen min-w-20 flex-col items-center gap-8 transition-all md:static',
+		'bg-primary absolute top-0 z-50 flex h-dvh min-w-20 flex-col items-center gap-8 transition-all md:static',
 		isMenuOpen ? 'left-0' : '-left-20'
 	]}
 >

@@ -38,7 +38,7 @@
 
 {#if $scheduleStore.isDashboardOpen}
 	<div
-		class="bg-primary z-20 flex h-screen w-screen flex-col items-center justify-center gap-4 self-start rounded-xl pt-4 pr-8 pb-8 pl-8 max-md:absolute max-md:top-0 max-md:left-0 md:max-xl:hidden xl:h-1/2 xl:w-1/4 xl:justify-between xl:gap-0"
+		class="bg-primary z-20 flex h-dvh w-screen flex-col items-center justify-center gap-4 self-start rounded-xl pt-4 pr-8 pb-8 pl-8 max-md:absolute max-md:top-0 max-md:left-0 md:max-xl:hidden xl:h-1/2 xl:w-1/4 xl:justify-between xl:gap-0"
 	>
 		<button
 			class="fill-neutral absolute top-8 right-8 h-0.5 cursor-pointer xl:hidden"

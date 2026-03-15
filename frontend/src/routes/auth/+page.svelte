@@ -6,7 +6,7 @@
 	let isSignin = $state(true);
 </script>
 
-<div class="bg-secondary flex h-screen w-screen items-center justify-center">
+<div class="bg-secondary flex h-dvh w-screen items-center justify-center">
 	<div
 		class="bg-primary flex h-full w-full flex-col items-center justify-center shadow-xl md:h-3/4 md:w-3/7 md:rounded-2xl xl:w-1/3"
 	>

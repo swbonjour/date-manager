@@ -31,7 +31,7 @@
 
 {#if $scheduleStore.isTasksOpen}
 	<div
-		class="bg-primary absolute top-0 left-0 z-20 h-screen w-screen flex-col items-center justify-start rounded-xl pt-8 pr-8 pb-8 pl-8 md:static md:flex md:h-full md:w-1/2 md:pt-4 xl:w-1/4"
+		class="bg-primary absolute top-0 left-0 z-20 h-dvh w-screen flex-col items-center justify-start rounded-xl pt-8 pr-8 pb-8 pl-8 md:static md:flex md:h-full md:w-1/2 md:pt-4 xl:w-1/4"
 	>
 		<div class="flex w-full items-center justify-between">
 			<p class="text-neutral text-xl font-semibold">Мои задачи</p>

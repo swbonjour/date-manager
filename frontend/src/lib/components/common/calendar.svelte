@@ -78,7 +78,7 @@
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
-		class="bg-primary absolute top-0 left-0 z-10 h-screen w-screen transition-all md:opacity-0"
+		class="bg-primary absolute top-0 left-0 z-10 h-dvh w-screen transition-all md:opacity-0"
 		onclick={toggleCalendar}
 	></div>
 {/if}
