@@ -15,9 +15,14 @@ export const userStore = writable({
 	name: '',
 	timezone: '',
 	profileImg: '',
+	profileImgTimestamp: '',
+	age: '',
 	usersMap: new Map(),
-	getProfileImg: async () => {
-		const profileImg = await client.user.userControllerGetProfileImg();
+	getProfileImg: async (id: string, profileImgTimestamp: string) => {
+		const profileImg = await client.user.userControllerGetProfileImg({
+			user_id: id,
+			timestamp: profileImgTimestamp
+		});
 		const profileImgURL = URL.createObjectURL(profileImg);
 		userStore.update((u) => {
 			return {
@@ -52,5 +57,10 @@ const parseAuthToken = (): AuthTokenData | undefined => {
 	}
 	setHeader('Authorization', `Bearer ${authToken}`);
 	const decoded: AuthTokenData = jwt.jwtDecode(authToken);
-	return { _id: decoded._id, email: decoded.email, timezone: decoded.timezone, name: decoded.name };
+	return {
+		_id: decoded._id,
+		email: decoded.email,
+		timezone: decoded.timezone,
+		name: decoded.name
+	};
 };

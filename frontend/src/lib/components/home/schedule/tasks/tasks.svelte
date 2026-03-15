@@ -62,8 +62,8 @@
 			{/each}
 		</div>
 	</div>
-	<TaskEdit></TaskEdit>
 {/if}
+<TaskEdit></TaskEdit>
 
 <style>
 	.scrollbar::-webkit-scrollbar {

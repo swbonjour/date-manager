@@ -51,11 +51,11 @@
 		}
 
 		return !isErr;
-	}
+	};
 
 	const signUp = async () => {
 		const isSignUpDataCorrect = checkSignUpData();
-		if(!isSignUpDataCorrect) {
+		if (!isSignUpDataCorrect) {
 			return;
 		}
 
@@ -84,7 +84,12 @@
 				}));
 			});
 			if ($userStore.id) {
-				await $userStore.getProfileImg();
+				const userData = await client.user.userControllerGetUserById({ id: $userStore.id });
+
+				$userStore.profileImgTimestamp = userData.profile_img || '';
+				$userStore.age = userData.age;
+
+				await $userStore.getProfileImg($userStore.id, $userStore.profileImgTimestamp);
 			}
 			goto('/home/schedule');
 		}
@@ -92,7 +97,7 @@
 
 	const changeRegisterStage = () => {
 		const isSignUpDataCorrect = checkSignUpData();
-		if(!isSignUpDataCorrect) {
+		if (!isSignUpDataCorrect) {
 			return;
 		}
 		isRegisterDataStageComplete = !isRegisterDataStageComplete;
@@ -184,12 +189,15 @@
 			</div>
 		{:else}
 			<div class="w-full">
-				<p class="text-neutral mb-2 font-medium text-lg">Имя</p>
-				<Input inputAttributes={{ placeholder: 'Иван', maxlength: 35 }} bind:value={name} 
-					bind:isErr={isErr}/>
+				<p class="text-neutral mb-2 text-lg font-medium">Имя</p>
+				<Input
+					inputAttributes={{ placeholder: 'Иван', maxlength: 35 }}
+					bind:value={name}
+					bind:isErr
+				/>
 			</div>
 			<div class="w-full">
-				<p class="text-neutral mb-2 font-medium text-lg">Возраст</p>
+				<p class="text-neutral mb-2 text-lg font-medium">Возраст</p>
 				<Input
 					inputAttributes={{
 						type: 'date',
@@ -197,12 +205,11 @@
 						max: DateTime.now().minus({ year: 18 }).toFormat('yyyy-MM-dd')
 					}}
 					bind:value={age}
-					bind:isErr={isErr}
+					bind:isErr
 				/>
-				{age}
 			</div>
 			<div class="w-full">
-				<p class="text-neutral mb-2 font-medium text-lg">Электронная почта</p>
+				<p class="text-neutral mb-2 text-lg font-medium">Электронная почта</p>
 				<Input
 					inputAttributes={{ placeholder: 'example@mail.ru', type: 'email', maxlength: 254 }}
 					bind:value={email}
@@ -210,15 +217,15 @@
 				/>
 			</div>
 			<div class="w-full">
-				<p class="text-neutral mb-2 font-medium text-lg">Пароль</p>
+				<p class="text-neutral mb-2 text-lg font-medium">Пароль</p>
 				<Input
 					inputAttributes={{ placeholder: '******', type: 'password' }}
 					bind:value={password}
-					bind:isErr={isErr}
+					bind:isErr
 				/>
 			</div>
 			<div class="w-full">
-				<p class="text-neutral mb-2 font-medium text-lg">Подтверждение пароля</p>
+				<p class="text-neutral mb-2 text-lg font-medium">Подтверждение пароля</p>
 				<Input
 					inputAttributes={{ placeholder: '******', type: 'password' }}
 					bind:value={passwordConfirm}
@@ -226,7 +233,15 @@
 				/>
 			</div>
 			{#if isErrEmail || isErrPasswordConfirm || isErr}
-				<p class="text-lg text-neutral text-center">{isErrEmail ? 'Некорректный email' : isErrPasswordConfirm ? 'Пароли не совпадают' : isErr ? 'Все поля должны быть заполнены' : ''}</p>
+				<p class="text-neutral text-center text-lg">
+					{isErrEmail
+						? 'Некорректный email'
+						: isErrPasswordConfirm
+							? 'Пароли не совпадают'
+							: isErr
+								? 'Все поля должны быть заполнены'
+								: ''}
+				</p>
 			{:else}
 				<button
 					class="bg-neutral text-primary hover:bg-accent hover:text-neutral h-12 w-full cursor-pointer rounded-lg text-lg font-medium transition-all duration-200"
@@ -235,9 +250,9 @@
 			{/if}
 		{/if}
 		<div class="flex flex-wrap items-center justify-center gap-2">
-			<p class="text-neutral mb-2 font-medium text-lg">Уже есть аккаунт?</p>
+			<p class="text-neutral mb-2 text-lg font-medium">Уже есть аккаунт?</p>
 			<button
-				class="text-accent border-primary hover:border-accent mb-2 cursor-pointer border-b-2 font-medium transition-all duration-200 hover:border-b-2 text-lg"
+				class="text-accent border-primary hover:border-accent mb-2 cursor-pointer border-b-2 text-lg font-medium transition-all duration-200 hover:border-b-2"
 				onclick={changeToSignin}
 			>
 				Войти

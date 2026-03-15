@@ -7,41 +7,21 @@
 	import Logo from '$lib/icon/logo.svg?raw';
 	import { MenuItem } from '$lib/enums/enum';
 	import { goto } from '$app/navigation';
-	import { onMount } from 'svelte';
 	import Notice from '$lib/icon/notice.svg?raw';
 	import Sun from '$lib/icon/sun.svg?raw';
 	import { themeStore } from '$lib/stores/theme-store';
 	import { userStore } from '$lib/stores/user-store';
+	import RightArrow from '$lib/icon/right-arrow.svg?raw';
 
 	let selectedMenuItem = $state<MenuItem>(MenuItem.SCHEDULE);
 
 	let isMenuOpen = $state(false);
-	let touchStart = $state(0);
-	let touchEnd = $state(0);
-	const touchDiff = $derived(touchEnd - touchStart);
 
 	let isProfileMenuOpen = $state(false);
 
 	const selectMenuItem = (menuItem: MenuItem) => {
 		selectedMenuItem = menuItem;
 		goto(`/home/${menuItem}`);
-	};
-
-	const toggleMenu = () => {
-		if (touchStart > 100) {
-			return;
-		}
-
-		if (touchDiff < 50 && touchDiff > -50) {
-			return;
-		}
-
-		if (touchDiff > 0 && !isMenuOpen) {
-			isMenuOpen = !isMenuOpen;
-		} else if (touchDiff < 0 && isMenuOpen) {
-			isMenuOpen = !isMenuOpen;
-			isProfileMenuOpen = false;
-		}
 	};
 
 	const toggleTheme = () => {
@@ -52,6 +32,11 @@
 		isProfileMenuOpen = !isProfileMenuOpen;
 	};
 
+	const toggleMenu = () => {
+		isMenuOpen = !isMenuOpen;
+		isProfileMenuOpen = false;
+	};
+
 	const gotoUserProfile = () => {
 		goto('/home/user');
 	};
@@ -60,19 +45,17 @@
 		localStorage.removeItem('auth-token');
 		goto('/auth');
 	};
-
-	onMount(() => {
-		addEventListener('touchstart', (e) => {
-			touchStart = e.touches[0].clientX;
-		});
-
-		addEventListener('touchend', (e) => {
-			touchEnd = e.changedTouches[0].clientX;
-			toggleMenu();
-		});
-	});
 </script>
 
+<button
+	class={[
+		'border-neutral fill-neutral bg-primary absolute -bottom-2 -left-2 z-60 flex h-10 w-10 -rotate-45 items-center justify-center rounded-full border-2 transition-all md:hidden',
+		isMenuOpen ? 'rotate-135' : '-rotate-45'
+	]}
+	onclick={toggleMenu}
+>
+	{@html RightArrow}
+</button>
 {#if isMenuOpen}
 	<div class="absolute z-40 h-dvh w-screen bg-black opacity-80 transition-all md:hidden"></div>
 {/if}
@@ -130,7 +113,7 @@
 			{@html Chat}
 		</button>
 	</div>
-	<div class="mt-auto mb-4 flex flex-col items-center gap-8 md:hidden">
+	<div class="mt-auto mb-8 flex flex-col items-center gap-8 md:hidden">
 		<button class="fill-neutral hover:cursor-pointer" onclick={toggleTheme}>{@html Sun}</button>
 		<button class="fill-neutral hover:cursor-pointer">{@html Notice}</button>
 		<div class="relative">

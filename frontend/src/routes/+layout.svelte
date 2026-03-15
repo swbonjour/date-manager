@@ -40,7 +40,12 @@
 				}));
 			});
 			if ($userStore.id) {
-				await $userStore.getProfileImg();
+				const userData = await client.user.userControllerGetUserById({ id: $userStore.id });
+
+				$userStore.profileImgTimestamp = userData.profile_img || '';
+				$userStore.age = userData.age;
+
+				await $userStore.getProfileImg($userStore.id, $userStore.profileImgTimestamp);
 			}
 		});
 	});

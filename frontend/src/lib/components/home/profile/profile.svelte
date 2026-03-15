@@ -8,6 +8,8 @@
 	import TrashIcon from '$lib/icon/trash.svg?raw';
 	import { onMount, tick } from 'svelte';
 	import { client } from '$lib/utils';
+	import imageCompression from 'browser-image-compression';
+	import { getFileSize } from '$lib/utils/helper';
 
 	const activities = [
 		ActivityTypeEnum.EDUCATION,
@@ -66,17 +68,64 @@
 		selectedMenuItem = menuItem;
 	};
 
+	let inputFileElement: HTMLInputElement | undefined = $state();
+	let imgFile = $state<File>();
+
+	const handleInputImgChange = async (e: Event) => {
+		const target = e.target as HTMLInputElement;
+
+		if (!target || !target.files?.length) {
+			return;
+		}
+
+		const file = target.files[0];
+
+		const fileSize = getFileSize(file);
+
+		if (fileSize > 10) {
+			return;
+		}
+
+		const reader = new FileReader();
+		reader.onload = (r) => {
+			if (r.target) {
+				$userStore.profileImg = r.target.result as string;
+			}
+		};
+		reader.readAsDataURL(file);
+
+		const compressedFile = await imageCompression(file, {
+			maxSizeMB: 1,
+			maxWidthOrHeight: 300,
+			useWebWorker: true,
+			maxIteration: 10,
+			initialQuality: 0.8
+		});
+
+		imgFile = compressedFile;
+
+		//@ts-ignore
+		await client.user.userControllerUpdateUserImg({ id: $userStore.id, file: imgFile });
+	};
+
+	const triggerInputFile = () => {
+		if (inputFileElement) {
+			inputFileElement.click();
+		}
+	};
+
 	onMount(() => {
 		const unsubscribeUserStore = userStore.subscribe(async (u) => {
 			if (!u.id) {
 				return;
 			}
 
-			const user = await client.user.userControllerGetUserById({ id: u.id });
-
-			if (user) {
-				userData = user;
-			}
+			userData = {
+				email: u.email,
+				id: u.id,
+				name: u.name,
+				age: u.age
+			};
 
 			unsubscribeUserStore();
 		});
@@ -108,22 +157,36 @@
 		</button>
 		<p class="text-neutral text-xl font-bold md:block lg:text-2xl">Выйти</p>
 	</div>
-	<div class="flex items-center justify-between gap-6">
-		{#if !$userStore.profileImg}
-			<div class="bg-secondary flex h-40 w-40 items-center justify-center rounded-full"></div>
+	<div class="flex w-full items-center justify-center md:justify-between">
+		<input
+			type="file"
+			bind:this={inputFileElement}
+			class="hidden"
+			onchange={(e) => handleInputImgChange(e)}
+			accept="image/png, image/jpeg"
+		/>
+		{#if $userStore.profileImg}
+			<button
+				class="bg-secondary img-shadow relative h-60 w-60 cursor-pointer overflow-hidden rounded-full"
+				onclick={triggerInputFile}
+			>
+				<img
+					src={$userStore.profileImg}
+					alt="preview"
+					class="h-60 w-60 rounded-full object-cover"
+					style="box-shadow: 76px 4px 8px 0px rgba(34, 60, 80, 0.2) inset"
+				/>
+			</button>
 		{:else}
-			<img src={$userStore.profileImg} alt="img" class="h-40 w-40 rounded-full object-cover" />
+			<!-- svelte-ignore a11y_consider_explicit_label -->
+			<button
+				class="bg-secondary img-shadow_select relative h-60 w-60 cursor-pointer overflow-hidden rounded-full transition-all duration-200"
+				onclick={triggerInputFile}
+			>
+				<div class="bg-neutral absolute top-14 left-20 h-20 w-20 rounded-full"></div>
+				<div class="bg-neutral absolute -bottom-2 left-15 h-25 w-30 rounded-full"></div>
+			</button>
 		{/if}
-		<div class="flex flex-col items-start justify-center gap-4">
-			<button
-				class="border-accent text-accent bg-primary fill-accent stroke-accent flex cursor-pointer items-center gap-2 rounded-xl border-2 p-2 font-bold lg:text-lg"
-				>{@html ImageIcon} Изменить</button
-			>
-			<button
-				class="border-accent text-accent bg-primary fill-accent flex cursor-pointer items-center gap-2 rounded-xl border-2 p-2 font-bold lg:text-lg"
-				>{@html TrashIcon} Удалить</button
-			>
-		</div>
 	</div>
 	<div
 		class="flex w-full flex-col items-start justify-between gap-8 md:flex-row md:gap-0 md:overflow-y-auto xl:w-5/6"

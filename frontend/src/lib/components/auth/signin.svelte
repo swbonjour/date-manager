@@ -28,7 +28,7 @@
 			isError = true;
 		}
 
-		if(!password) {
+		if (!password) {
 			isErrPassword = true;
 		}
 
@@ -38,59 +38,67 @@
 		}
 
 		return !isError;
-	}
+	};
 
 	const signIn = async () => {
 		const isSignInDataCorrect = checkSignInData();
-		if(!isSignInDataCorrect) {
+		if (!isSignInDataCorrect) {
 			return;
 		}
 
-		await client.auth.authControllerSignIn({
-			email: email,
-			password: password
-		}).then(async (res) => {
-			$userStore.init(res.authToken);
-			Settings.defaultLocale = 'ru';
-			Settings.defaultZone = $userStore.timezone;
-			$scheduleStore.init();
-			window.addEventListener('resize', () => {
-				const isItemsOpen = window.innerWidth > 768;
+		await client.auth
+			.authControllerSignIn({
+				email: email,
+				password: password
+			})
+			.then(async (res) => {
+				$userStore.init(res.authToken);
+				Settings.defaultLocale = 'ru';
+				Settings.defaultZone = $userStore.timezone;
+				$scheduleStore.init();
+				window.addEventListener('resize', () => {
+					const isItemsOpen = window.innerWidth > 768;
 
-				scheduleStore.update((s) => ({
-					...s,
-					isTasksOpen: isItemsOpen,
-					isDashboardOpen: isItemsOpen
-				}));
+					scheduleStore.update((s) => ({
+						...s,
+						isTasksOpen: isItemsOpen,
+						isDashboardOpen: isItemsOpen
+					}));
+				});
+				if ($userStore.id) {
+					const userData = await client.user.userControllerGetUserById({ id: $userStore.id });
+
+					$userStore.profileImgTimestamp = userData.profile_img || '';
+					$userStore.age = userData.age;
+
+					await $userStore.getProfileImg($userStore.id, $userStore.profileImgTimestamp);
+				}
+				goto('/home/schedule');
+			})
+			.catch((res: AxiosError<AuthSignInBadRequestResponse>) => {
+				const resData = res.response?.data;
+
+				if (!resData) {
+					return;
+				}
+
+				if (resData.isEmail) {
+					isErrEmail = true;
+					return;
+				}
+
+				if (resData.isPassword) {
+					isErrPassword = true;
+					return;
+				}
 			});
-			if ($userStore.id) {
-				await $userStore.getProfileImg();
-			}
-			goto('/home/schedule');
-		}).catch((res: AxiosError<AuthSignInBadRequestResponse>) => {
-			const resData = res.response?.data;
-
-			if(!resData) {
-				return;
-			}
-
-			if(resData.isEmail) {
-				isErrEmail = true;
-				return;
-			}
-
-			if(resData.isPassword) {
-				isErrPassword = true;
-				return;
-			}
-		});
 	};
 </script>
 
 <div class="flex w-full flex-1 flex-col items-center justify-center gap-6">
 	<div class="flex w-3/4 flex-col gap-12 md:w-2/3">
 		<div>
-			<p class="text-neutral mb-2 font-medium text-lg">Электронная почта</p>
+			<p class="text-neutral mb-2 text-lg font-medium">Электронная почта</p>
 			<Input
 				inputAttributes={{ placeholder: 'example@mail.ru', maxlength: 254 }}
 				bind:value={email}
@@ -98,7 +106,7 @@
 			/>
 		</div>
 		<div>
-			<p class="text-neutral mb-2 font-medium text-lg">Пароль</p>
+			<p class="text-neutral mb-2 text-lg font-medium">Пароль</p>
 			<Input
 				inputAttributes={{ placeholder: '******', type: 'password' }}
 				bind:value={password}
@@ -107,18 +115,20 @@
 		</div>
 
 		{#if isErrEmail || isErrPassword}
-		<p class="text-lg text-neutral text-center">{isErrEmail ? 'Аккаунт не существует' : isErrPassword ? 'Неверный пароль' : ''}</p>
+			<p class="text-neutral text-center text-lg">
+				{isErrEmail ? 'Аккаунт не существует' : isErrPassword ? 'Неверный пароль' : ''}
+			</p>
 		{:else}
-		<button
-			class="bg-neutral text-primary hover:bg-accent hover:text-neutral h-12
+			<button
+				class="bg-neutral text-primary hover:bg-accent hover:text-neutral h-12
 			cursor-pointer rounded-lg text-lg font-medium transition-all duration-200"
-			onclick={signIn}>Войти</button
-		>
+				onclick={signIn}>Войти</button
+			>
 		{/if}
 		<div class="flex flex-wrap items-center justify-center gap-2">
-			<p class="text-neutral mb-2 font-medium text-lg">Ещё нет аккаунта?</p>
+			<p class="text-neutral mb-2 text-lg font-medium">Ещё нет аккаунта?</p>
 			<button
-				class="text-accent border-primary hover:border-b-accent mb-2 cursor-pointer border-b-2 font-medium transition-all duration-200 hover:border-b-2 text-lg"
+				class="text-accent border-primary hover:border-b-accent mb-2 cursor-pointer border-b-2 text-lg font-medium transition-all duration-200 hover:border-b-2"
 				onclick={changeToSignup}
 			>
 				Зарегистрироваться

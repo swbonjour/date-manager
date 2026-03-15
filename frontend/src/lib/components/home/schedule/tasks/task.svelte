@@ -5,7 +5,7 @@
 	import type { ActivityTypeEnum, TaskDto } from '$lib/utils/client';
 	import { DateTime } from 'luxon';
 	import { onMount } from 'svelte';
-	import Trash from '$lib/icon/trash.svg?raw'
+	import Trash from '$lib/icon/trash.svg?raw';
 	import { client } from '$lib/utils';
 
 	let { task }: { task: TaskDto } = $props();
@@ -31,16 +31,19 @@
 	};
 
 	const deleteTask = async (taskId: string) => {
-		await client.task.taskControllerDeleteTask({ id: taskId});
-		
+		await client.task.taskControllerDeleteTask({ id: taskId });
+
 		scheduleStore.update((s) => {
-			s.tasks.splice(s.tasks.findIndex((item) => item._id === taskId), 1);
+			s.tasks.splice(
+				s.tasks.findIndex((item) => item._id === taskId),
+				1
+			);
 			return {
-					...s,
-					tasks: [...s.tasks],
-				}
-			});
-	}
+				...s,
+				tasks: [...s.tasks]
+			};
+		});
+	};
 
 	const hoverTask = (taskId: string) => {
 		scheduleStore.update((s) => ({
@@ -67,7 +70,7 @@
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <!-- svelte-ignore a11y_mouse_events_have_key_events -->
 <div
-	class="flex h-14 items-center justify-between gap-8 rounded-md transition-all duration-75 hover:cursor-pointer lg:w-full"
+	class="flex h-14 w-full items-center justify-between gap-8 rounded-md transition-all duration-75 hover:cursor-pointer"
 	style={task._id === $scheduleStore.hoveredTask
 		? `box-shadow: 0px -20px 20px -20px ${ActivityTypeColors[task.type]} inset`
 		: ''}
@@ -87,11 +90,13 @@
 			{ActivityTypeTranslation[task.type]}
 		</div>
 		<p
-			class="text-md text-neutral w-40 overflow-hidden font-semibold text-ellipsis xl:w-20 2xl:w-40"
+			class="text-md text-neutral w-10 overflow-hidden font-semibold text-ellipsis xl:w-20 2xl:w-40"
 		>
 			{task.label}
 		</p>
 	</div>
 	<button class="fill-accent hover:cursor-pointer" onclick={toggleEdit}>{@html Edit}</button>
-	<button class="fill-accent hover:cursor-pointer" onclick={() => deleteTask(task._id)}>{@html Trash}</button>
+	<button class="fill-accent hover:cursor-pointer" onclick={() => deleteTask(task._id)}
+		>{@html Trash}</button
+	>
 </div>

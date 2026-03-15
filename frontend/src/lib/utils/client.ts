@@ -50,6 +50,11 @@ export interface GetUserByIdResponse {
   name: string;
   age: string;
   email: string;
+  profile_img?: string;
+}
+
+export interface UpdateUserImgDto {
+  id: string;
 }
 
 export interface TaskDto {
@@ -88,6 +93,11 @@ export interface AnalyticScheduleBusyGetResponse {
 export interface AuthControllerSignInParams {
   email: string;
   password: string;
+}
+
+export interface UserControllerGetProfileImgParams {
+  user_id: string;
+  timestamp: string;
 }
 
 export interface UserControllerGetUserByIdParams {
@@ -366,10 +376,14 @@ export class SchedlyApi<
      * @name UserControllerGetProfileImg
      * @request GET:/user/profile-img
      */
-    userControllerGetProfileImg: (params: RequestParams = {}) =>
+    userControllerGetProfileImg: (
+      query: UserControllerGetProfileImgParams,
+      params: RequestParams = {},
+    ) =>
       this.request<File, any>({
         path: `/user/profile-img`,
         method: "GET",
+        query: query,
         format: "blob",
         ...params,
       }),
@@ -389,6 +403,25 @@ export class SchedlyApi<
         path: `/user/${id}`,
         method: "GET",
         format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags User
+     * @name UserControllerUpdateUserImg
+     * @request PUT:/user/update-img
+     */
+    userControllerUpdateUserImg: (
+      data: UpdateUserImgDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/user/update-img`,
+        method: "PUT",
+        body: data,
+        type: ContentType.FormData,
         ...params,
       }),
   };

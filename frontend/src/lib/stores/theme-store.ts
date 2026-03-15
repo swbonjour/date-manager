@@ -8,7 +8,7 @@ const getThemeByName = (name: ThemesName) => themes.find((item) => item.name ===
 export const themeStore = writable({
 	...getThemeByName(currentTheme),
 	init: () => {
-		currentTheme = (localStorage.getItem('theme') as ThemesName) || ThemesName.LIGHT;
+		currentTheme = (localStorage.getItem('theme') as ThemesName) || ThemesName.DARK;
 		setRootColors(getThemeByName(currentTheme)!.colors);
 	},
 	toggle: () => {

@@ -139,7 +139,14 @@
 				</div>
 				{#each { length: daysToAddToStart }, day}
 					<button
-						class="text-secondary_contrast hover:bg-secondary flex h-8 w-8 items-center justify-center rounded-md text-sm transition-all hover:cursor-pointer"
+						class={[
+							'text-secondary_contrast hover:bg-secondary flex h-8 w-8 items-center justify-center rounded-md text-sm transition-colors hover:cursor-pointer',
+							$scheduleStore.date.day ===
+								previousMonthDate.daysInMonth + day - daysToAddToStart + 1 &&
+							$scheduleStore.date.month === previousMonthDate.month
+								? 'border-accent rounded-full border'
+								: ''
+						]}
 						onclick={() =>
 							selectDate(
 								DateTime.fromObject({
@@ -154,7 +161,13 @@
 				{/each}
 				{#each { length: daysInMonth }, day}
 					<button
-						class="text-neutral hover:bg-secondary flex h-8 w-8 items-center justify-center rounded-md text-sm transition-all hover:cursor-pointer"
+						class={[
+							'text-neutral hover:bg-secondary flex h-8 w-8 items-center justify-center rounded-md text-sm transition-colors hover:cursor-pointer',
+							$scheduleStore.date.day === day + 1 &&
+							$scheduleStore.date.month === calendarDate.month
+								? 'border-accent rounded-full border'
+								: ''
+						]}
 						onclick={() =>
 							selectDate(
 								DateTime.fromObject({
@@ -167,7 +180,13 @@
 				{/each}
 				{#each { length: daysToAddToEnd }, day}
 					<button
-						class="text-secondary_contrast hover:bg-secondary flex h-8 w-8 items-center justify-center rounded-md text-sm transition-all hover:cursor-pointer"
+						class={[
+							'text-secondary_contrast hover:bg-secondary flex h-8 w-8 items-center justify-center rounded-md text-sm transition-colors hover:cursor-pointer',
+							$scheduleStore.date.day === day + 1 &&
+							$scheduleStore.date.month === nextMonthDate.month
+								? 'border-accent rounded-full border'
+								: ''
+						]}
 						onclick={() =>
 							selectDate(
 								DateTime.fromObject({
