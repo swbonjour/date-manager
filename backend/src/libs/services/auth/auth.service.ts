@@ -14,6 +14,7 @@ import { DateTime } from 'luxon';
 import { FileStorage, StorageFolder } from 'src/utils/storage';
 import { ConfigService } from '@nestjs/config';
 import { ConfigEnv } from 'src/config/conf-env';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class AuthService {
@@ -38,6 +39,7 @@ export class AuthService {
     const passwordHash = await hash(dto.password, 10);
 
     const user = this.manager.create(UserEntity, {
+      _id: randomUUID(),
       name: dto.name,
       age: DateTime.fromISO(dto.age).toISODate()!,
       email: dto.email,
@@ -45,12 +47,17 @@ export class AuthService {
       timezone: dto.timezone,
     });
 
-    await this.manager.insert(UserEntity, user);
-
     if (dto.file) {
       const fileStorage = new FileStorage(this.configService);
-      await fileStorage.saveFile(dto.file, user._id, StorageFolder.PROFILE);
+      const filename = await fileStorage.saveFile(
+        dto.file,
+        user._id,
+        StorageFolder.PROFILE,
+      );
+      user.profile_img = filename?.split('_')[1].split('.')[0];
     }
+
+    await this.manager.insert(UserEntity, user);
 
     const authToken = await this.jwtService.signAsync({
       _id: user._id,

@@ -19,4 +19,7 @@ export class UserEntity {
 
   @Column('text', { nullable: false })
   timezone!: string;
+
+  @Column('text', { nullable: true })
+  profile_img?: string;
 }

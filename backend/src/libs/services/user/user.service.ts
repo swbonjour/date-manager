@@ -5,6 +5,7 @@ import {
   GetProfileImgDto,
   GetUserByIdDto,
   GetUserByIdResponse,
+  UpdateUserImgDto,
 } from '../../dto/user.dto';
 import { Injectable } from '@nestjs/common';
 import { FileStorage, StorageFolder } from 'src/utils/storage';
@@ -32,7 +33,7 @@ export class UserService {
   public async getProfileImg(dto: GetProfileImgDto) {
     const storage = new FileStorage(this.configService);
     const profileImg = await storage.getFile(
-      dto.user_id,
+      dto.timestamp ? `${dto.user_id}_${dto.timestamp}` : dto.user_id,
       StorageFolder.PROFILE,
     );
     if (!profileImg) {
@@ -42,8 +43,21 @@ export class UserService {
     return profileImg;
   }
 
-  public async updateProfileImg() {
-    
+  public async updateProfileImg(dto: UpdateUserImgDto) {
+    const fileStorage = new FileStorage(this.configService);
+    const filename = await fileStorage.saveFile(
+      dto.file,
+      dto.id,
+      StorageFolder.PROFILE,
+    );
+
+    await this.manager.update(
+      UserEntity,
+      {
+        _id: dto.id,
+      },
+      { profile_img: filename?.split('_')[1].split('.')[0] },
+    );
   }
 
   public async getUserById(
@@ -59,6 +73,7 @@ export class UserService {
           name: user.name,
           age: user.age,
           email: user.email,
+          profile_img: user.profile_img,
         }
       : null;
   }

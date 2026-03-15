@@ -15,6 +15,10 @@ export class GetProfileImgDto {
   @ApiProperty({ type: String })
   @IsUUID()
   user_id: string;
+
+  @ApiProperty({ type: String })
+  @IsString()
+  timestamp?: string;
 }
 
 export class GetProfileImgResponse {
@@ -46,4 +50,17 @@ export class GetUserByIdResponse {
   @ApiProperty({ type: String })
   @IsString()
   email: string;
+
+  @ApiPropertyOptional({ type: String })
+  @IsString()
+  @IsOptional()
+  profile_img?: string;
+}
+
+export class UpdateUserImgDto {
+  @ApiProperty({ type: String })
+  @IsUUID()
+  id: string;
+
+  file: Express.Multer.File;
 }

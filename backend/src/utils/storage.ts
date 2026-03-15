@@ -53,10 +53,14 @@ export class FileStorage {
     } catch (err: any) {
       console.error('[STORAGE]: error saving file', err);
     }
+
+    return filenameWithTimestamp;
   }
 
   public async getFile(filename: string, folder: StorageFolder) {
     const dirPath = path.join(this.basePath, folder);
+
+    await this.ensureDirExists(dirPath);
 
     const dir = await fs.readdir(dirPath, { withFileTypes: true });
 

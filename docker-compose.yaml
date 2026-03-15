@@ -39,6 +39,8 @@ services:
       - JWT_SECRET=${JWT_SECRET}
       
       - FILE_SIZE=${FILE_SIZE}
+    volumes:
+      - storage:/storage
     depends_on:
       postgres:
         condition: service_healthy
