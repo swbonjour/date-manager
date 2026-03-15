@@ -11,13 +11,15 @@
 	let { isSignin = $bindable() } = $props();
 
 	let name = $state('');
-	let age = $state(DateTime.now().minus({ year: 18 }).toFormat('yyyy-dd-M'));
+	let age = $state('');
 	let email = $state('');
 	let password = $state('');
 	let passwordConfirm = $state('');
 
 	let isErrEmail = $state(false);
 	let isErrPasswordConfirm = $state(false);
+
+	let isErr = $state(false);
 
 	let isRegisterDataStageComplete = $state(false);
 
@@ -29,20 +31,31 @@
 		isSignin = !isSignin;
 	};
 
-	const signUp = async () => {
+	const checkSignUpData = () => {
 		if (!name || !age || !email || !password || !passwordConfirm) {
-			return;
+			isErr = true;
 		}
 
 		if (!emailRegexp.test(email)) {
 			isErrEmail = true;
+			isErr = true;
 		}
 
-		if (password !== passwordConfirm) {
+		if (password !== passwordConfirm || !passwordConfirm) {
 			isErrPasswordConfirm = true;
+			isErr = true;
 		}
 
 		if (isErrEmail || isErrPasswordConfirm) {
+			isErr = true;
+		}
+
+		return !isErr;
+	}
+
+	const signUp = async () => {
+		const isSignUpDataCorrect = checkSignUpData();
+		if(!isSignUpDataCorrect) {
 			return;
 		}
 
@@ -78,6 +91,10 @@
 	};
 
 	const changeRegisterStage = () => {
+		const isSignUpDataCorrect = checkSignUpData();
+		if(!isSignUpDataCorrect) {
+			return;
+		}
 		isRegisterDataStageComplete = !isRegisterDataStageComplete;
 	};
 
@@ -167,22 +184,25 @@
 			</div>
 		{:else}
 			<div class="w-full">
-				<p class="text-neutral mb-2 font-medium">Имя</p>
-				<Input inputAttributes={{ placeholder: 'Иван', maxlength: 35 }} bind:value={name} />
+				<p class="text-neutral mb-2 font-medium text-lg">Имя</p>
+				<Input inputAttributes={{ placeholder: 'Иван', maxlength: 35 }} bind:value={name} 
+					bind:isErr={isErr}/>
 			</div>
 			<div class="w-full">
-				<p class="text-neutral mb-2 font-medium">Возраст</p>
+				<p class="text-neutral mb-2 font-medium text-lg">Возраст</p>
 				<Input
 					inputAttributes={{
 						type: 'date',
-						min: DateTime.now().minus({ year: 99 }).toFormat('yyyy-dd-M'),
-						max: DateTime.now().minus({ year: 18 }).toFormat('yyyy-dd-M')
+						min: DateTime.now().minus({ year: 99 }).toFormat('yyyy-MM-dd'),
+						max: DateTime.now().minus({ year: 18 }).toFormat('yyyy-MM-dd')
 					}}
 					bind:value={age}
+					bind:isErr={isErr}
 				/>
+				{age}
 			</div>
 			<div class="w-full">
-				<p class="text-neutral mb-2 font-medium">Электронная почта</p>
+				<p class="text-neutral mb-2 font-medium text-lg">Электронная почта</p>
 				<Input
 					inputAttributes={{ placeholder: 'example@mail.ru', type: 'email', maxlength: 254 }}
 					bind:value={email}
@@ -190,29 +210,34 @@
 				/>
 			</div>
 			<div class="w-full">
-				<p class="text-neutral mb-2 font-medium">Пароль</p>
+				<p class="text-neutral mb-2 font-medium text-lg">Пароль</p>
 				<Input
 					inputAttributes={{ placeholder: '******', type: 'password' }}
 					bind:value={password}
+					bind:isErr={isErr}
 				/>
 			</div>
 			<div class="w-full">
-				<p class="text-neutral mb-2 font-medium">Подтверждение пароля</p>
+				<p class="text-neutral mb-2 font-medium text-lg">Подтверждение пароля</p>
 				<Input
 					inputAttributes={{ placeholder: '******', type: 'password' }}
 					bind:value={passwordConfirm}
 					bind:isErr={isErrPasswordConfirm}
 				/>
 			</div>
-			<button
-				class="bg-neutral text-primary hover:bg-accent hover:text-neutral h-12 w-full cursor-pointer rounded-lg text-lg font-medium transition-all duration-200"
-				onclick={changeRegisterStage}>Далее</button
-			>
+			{#if isErrEmail || isErrPasswordConfirm || isErr}
+				<p class="text-lg text-neutral text-center">{isErrEmail ? 'Некорректный email' : isErrPasswordConfirm ? 'Пароли не совпадают' : isErr ? 'Все поля должны быть заполнены' : ''}</p>
+			{:else}
+				<button
+					class="bg-neutral text-primary hover:bg-accent hover:text-neutral h-12 w-full cursor-pointer rounded-lg text-lg font-medium transition-all duration-200"
+					onclick={changeRegisterStage}>Далее</button
+				>
+			{/if}
 		{/if}
 		<div class="flex flex-wrap items-center justify-center gap-2">
-			<p class="text-neutral mb-2 font-medium">Уже есть аккаунт?</p>
+			<p class="text-neutral mb-2 font-medium text-lg">Уже есть аккаунт?</p>
 			<button
-				class="text-accent border-primary hover:border-accent mb-2 cursor-pointer border-b-2 font-medium transition-all duration-200 hover:border-b-2"
+				class="text-accent border-primary hover:border-accent mb-2 cursor-pointer border-b-2 font-medium transition-all duration-200 hover:border-b-2 text-lg"
 				onclick={changeToSignin}
 			>
 				Войти

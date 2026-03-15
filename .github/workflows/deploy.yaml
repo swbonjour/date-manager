@@ -61,8 +61,10 @@ jobs:
       # Деплой на сервер
       - name: Deploy to server
         run: |
-          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "
+          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << "EOF"
             cd /var/www/date-manager
+
+            cp -f .env ./frontend
             
             # Останавливаем старые контейнеры
             docker compose down
@@ -71,4 +73,4 @@ jobs:
             docker compose up -d --build
             
             echo "Deployment completed successfully!"
-          "
+          EOF

@@ -24,8 +24,16 @@
 		const minutesInHour = 60;
 
 		for (const task of tasks) {
-			const taskTimeStart = DateTime.fromISO(task.start);
-			const taskTimeFinish = DateTime.fromISO(task.finish);
+			let taskTimeStart = DateTime.fromISO(task.start);
+			let taskTimeFinish = DateTime.fromISO(task.finish);
+
+			if (taskTimeStart.day !== taskTimeFinish.day) {
+				if (taskTimeStart.day === $scheduleStore.date.day) {
+					taskTimeFinish = taskTimeStart.endOf('day');
+				} else {
+					taskTimeStart = taskTimeFinish.startOf('day');
+				}
+			}
 
 			let taskPercentInHour = 0;
 			let taskStartPadding = 0;
@@ -35,19 +43,15 @@
 					(taskTimeFinish.diff(taskTimeStart, 'minute').minutes / minutesInHour) * 100
 				);
 				taskStartPadding = Math.round(
-					(taskTimeStart.diff(DateTime.fromISO(task.start).startOf('hour'), 'minute').minutes /
-						minutesInHour) *
+					(taskTimeStart.diff(taskTimeStart.startOf('hour'), 'minute').minutes / minutesInHour) *
 						100
 				);
 			} else if (taskTimeStart.hour === row && taskTimeFinish.hour !== row) {
 				taskPercentInHour = Math.round(
-					(DateTime.fromISO(task.start).endOf('hour').diff(taskTimeStart, 'minute').minutes /
-						minutesInHour) *
-						100
+					(taskTimeStart.endOf('hour').diff(taskTimeStart, 'minute').minutes / minutesInHour) * 100
 				);
 				taskStartPadding = Math.round(
-					(taskTimeStart.diff(DateTime.fromISO(task.start).startOf('hour'), 'minute').minutes /
-						minutesInHour) *
+					(taskTimeStart.diff(taskTimeStart.startOf('hour'), 'minute').minutes / minutesInHour) *
 						100
 				);
 			} else if (taskTimeStart.hour !== row && taskTimeFinish.hour !== row) {
@@ -55,8 +59,7 @@
 				taskStartPadding = 0;
 			} else if (taskTimeStart.hour !== row && taskTimeFinish.hour === row) {
 				taskPercentInHour = Math.round(
-					(taskTimeFinish.diff(DateTime.fromISO(task.finish).startOf('hour'), 'minute').minutes /
-						minutesInHour) *
+					(taskTimeFinish.diff(taskTimeFinish.startOf('hour'), 'minute').minutes / minutesInHour) *
 						100
 				);
 				taskStartPadding = 0;
@@ -105,7 +108,7 @@
 <div class="flex items-center justify-center md:gap-4">
 	<p class="text-neutral w-20 text-lg font-semibold">{`${row}:00`}</p>
 	<div class="bg-secondary relative mr-2 h-8 w-full rounded-md md:mr-8">
-		{#each parsedTasks as task}
+		{#each parsedTasks as task (task._id)}
 			<!-- svelte-ignore a11y_mouse_events_have_key_events -->
 			<button
 				class={[

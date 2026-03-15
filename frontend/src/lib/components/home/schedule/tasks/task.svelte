@@ -5,6 +5,8 @@
 	import type { ActivityTypeEnum, TaskDto } from '$lib/utils/client';
 	import { DateTime } from 'luxon';
 	import { onMount } from 'svelte';
+	import Trash from '$lib/icon/trash.svg?raw'
+	import { client } from '$lib/utils';
 
 	let { task }: { task: TaskDto } = $props();
 
@@ -27,6 +29,18 @@
 			selectedTask: task
 		}));
 	};
+
+	const deleteTask = async (taskId: string) => {
+		await client.task.taskControllerDeleteTask({ id: taskId});
+		
+		scheduleStore.update((s) => {
+			s.tasks.splice(s.tasks.findIndex((item) => item._id === taskId), 1);
+			return {
+					...s,
+					tasks: [...s.tasks],
+				}
+			});
+	}
 
 	const hoverTask = (taskId: string) => {
 		scheduleStore.update((s) => ({
@@ -79,4 +93,5 @@
 		</p>
 	</div>
 	<button class="fill-accent hover:cursor-pointer" onclick={toggleEdit}>{@html Edit}</button>
+	<button class="fill-accent hover:cursor-pointer" onclick={() => deleteTask(task._id)}>{@html Trash}</button>
 </div>

@@ -20,10 +20,21 @@ export class TaskService {
   ) {}
 
   public async getTasksByDate(dto: TaskGetByDateDto): Promise<TaskEntity[]> {
-    return await this.manager.findBy(TaskEntity, {
+    const tasksInCurrentDay = await this.manager.findBy(TaskEntity, {
       user_id: dto.user_id,
-      date: DateTime.fromISO(dto.date).startOf('day').toISODate()!,
+      date: DateTime.fromISO(dto.date).toISODate()!,
     });
+
+    let tasksInPreviousDay = await this.manager.findBy(TaskEntity, {
+      user_id: dto.user_id,
+      date: DateTime.fromISO(dto.date).minus({ day: 1 }).toISODate()!,
+    });
+
+    tasksInPreviousDay = tasksInPreviousDay.filter(
+      (task) => task.start.getDate() !== task.finish.getDate(),
+    );
+
+    return [...tasksInCurrentDay, ...tasksInPreviousDay];
   }
 
   public async createTask(dto: TaskCreateDto): Promise<TaskDto> {
@@ -32,19 +43,59 @@ export class TaskService {
       user_id: dto.user_id,
     });
 
+    let existingTasksNextDay: TaskEntity[] = [];
+
     const date = DateTime.fromISO(dto.date).startOf('day');
     const start = DateTime.fromISO(dto.start);
     const finish = DateTime.fromISO(dto.finish);
 
-    const intersectingTask = existingTasksByDate.find(
-      (task) =>
-        (start.valueOf() > task.start.valueOf() &&
-          start.valueOf() < task.finish.valueOf()) ||
-        (finish.valueOf() > task.start.valueOf() &&
-          finish.valueOf() < task.finish.valueOf()) ||
-        (start.valueOf() <= task.start.valueOf() &&
-          finish.valueOf() >= task.finish.valueOf()),
-    );
+    if (start > finish) {
+      existingTasksNextDay = await this.getTasksByDate({
+        date: date.plus({ day: 1 }).toISODate()!,
+        user_id: dto.user_id,
+      });
+    }
+
+    let intersectingTask: TaskEntity | undefined;
+
+    if (start <= finish) {
+      intersectingTask = existingTasksByDate.find(
+        (task) =>
+          (start.valueOf() > task.start.valueOf() &&
+            start.valueOf() < task.finish.valueOf()) ||
+          (finish.valueOf() > task.start.valueOf() &&
+            finish.valueOf() < task.finish.valueOf()) ||
+          (start.valueOf() <= task.start.valueOf() &&
+            finish.valueOf() >= task.finish.valueOf()),
+      );
+    } else {
+      const finishInCurrentDay = DateTime.fromISO(dto.start).endOf('day');
+      intersectingTask = existingTasksByDate.find(
+        (task) =>
+          (start.valueOf() > task.start.valueOf() &&
+            start.valueOf() < task.finish.valueOf()) ||
+          (finishInCurrentDay.valueOf() > task.start.valueOf() &&
+            finishInCurrentDay.valueOf() < task.finish.valueOf()) ||
+          (start.valueOf() <= task.start.valueOf() &&
+            finishInCurrentDay.valueOf() >= task.finish.valueOf()),
+      );
+
+      if (!intersectingTask) {
+        const startInNextDay = DateTime.fromISO(dto.finish)
+          .plus({ day: 1 })
+          .startOf('day');
+        const finishInNextDay = DateTime.fromISO(dto.finish).plus({ day: 1 });
+        intersectingTask = existingTasksNextDay.find(
+          (task) =>
+            (startInNextDay.valueOf() > task.start.valueOf() &&
+              startInNextDay.valueOf() < task.finish.valueOf()) ||
+            (finishInNextDay.valueOf() > task.start.valueOf() &&
+              finishInNextDay.valueOf() < task.finish.valueOf()) ||
+            (startInNextDay.valueOf() <= task.start.valueOf() &&
+              finishInNextDay.valueOf() >= task.finish.valueOf()),
+        );
+      }
+    }
 
     if (intersectingTask) {
       throw new HttpException(
@@ -59,7 +110,8 @@ export class TaskService {
       type: dto.type,
       date: date.toISODate()!,
       start: start.toJSDate(),
-      finish: finish.toJSDate(),
+      finish:
+        start > finish ? finish.plus({ day: 1 }).toJSDate() : finish.toJSDate(),
       description: dto.description,
       user_id: dto.user_id,
     };

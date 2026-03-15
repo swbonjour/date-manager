@@ -35,15 +35,28 @@
 
 	let tasksMap = $derived(() => {
 		const resMap: Map<number, TaskDto[]> = new Map();
-		for (let i = 0; i < 24; i++) {
-			for (const task of $scheduleStore.tasks) {
-				const taskTimeStart = DateTime.fromISO(task.start).hour;
-				const taskTimeFinish = DateTime.fromISO(task.finish).hour;
+		for (const task of $scheduleStore.tasks) {
+			let taskTimeStart = DateTime.fromISO(task.start);
+			let taskTimeFinish = DateTime.fromISO(task.finish);
 
+			if (taskTimeStart.day !== taskTimeFinish.day) {
+				if (DateTime.fromISO(task.start).day === $scheduleStore.date.day) {
+					taskTimeFinish = taskTimeStart.endOf('day');
+				} else {
+					taskTimeStart = taskTimeFinish.startOf('day');
+				}
+			}
+
+			const taskTimeStartHour = taskTimeStart.hour;
+			const taskTimeFinishHour = taskTimeFinish.hour;
+
+			let i = taskTimeStartHour;
+
+			while (i <= taskTimeFinishHour) {
 				if (
-					taskTimeStart === i ||
-					(taskTimeStart < i && taskTimeFinish > i) ||
-					taskTimeFinish === i
+					taskTimeStartHour === i ||
+					(taskTimeStartHour < i && taskTimeFinishHour > i) ||
+					taskTimeFinishHour === i
 				) {
 					const existingTask = resMap.get(i);
 					if (!existingTask) {
@@ -52,13 +65,17 @@
 						resMap.set(i, [...existingTask, task]);
 					}
 				}
+				i++;
 			}
 		}
+
 		return resMap;
 	});
 
 	let currentDate = $state($scheduleStore.date);
 	let isTasksLoaded = $state(false);
+
+	let dateFormat = $state('');
 
 	$effect(() => {
 		$scheduleStore.date;
@@ -83,13 +100,26 @@
 			currentDate = $scheduleStore.date;
 		}
 	});
+
+	onMount(() => {
+		scheduleStore.subscribe((s) => {
+			if (!s.date) {
+				return;
+			}
+
+			dateFormat =
+				window.innerWidth < 768
+					? $scheduleStore.date.toFormat('dd.MM.yy')
+					: $scheduleStore.date.toFormat('dd MMMM yyyy');
+		});
+	});
 </script>
 
 <div class="flex h-full w-full flex-col gap-4 md:w-1/2 md:gap-4">
 	<div
 		class="bg-primary flex min-h-14 w-full items-center justify-center rounded-br-xl rounded-bl-xl md:justify-between md:rounded-xl md:pl-8"
 	>
-		<div class="text-neutral flex w-fit items-center justify-between gap-4">
+		<div class="text-neutral flex w-1/2 items-center justify-between gap-4 md:w-fit">
 			<button
 				class="fill-neutral absolute left-8 hover:cursor-pointer md:hidden"
 				onclick={toggleDashboard}>{@html Dashboard}</button
@@ -98,7 +128,9 @@
 				>{@html LeftArrow}</button
 			>
 			<div class="flex w-48 items-center justify-center gap-4">
-				<p class="text-lg font-semibold">{$scheduleStore.date.toFormat('dd MMMM yyyy')}</p>
+				<p class="text-lg font-semibold">
+					{dateFormat}
+				</p>
 				<Calendar bind:dateToUpdate={$scheduleStore.date} />
 			</div>
 			<button class="fill-accent hover:cursor-pointer" onclick={() => scrollDate('right')}

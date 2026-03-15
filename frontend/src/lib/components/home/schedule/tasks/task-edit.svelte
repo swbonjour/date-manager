@@ -33,7 +33,9 @@
 	let description = $state<string | null | undefined>('');
 
 	const toggleTasksModal = (e: MouseEvent, force?: boolean) => {
-		if(window.innerWidth < 768) {
+		e.stopPropagation();
+
+		if (window.innerWidth < 768 && !force) {
 			return;
 		}
 
@@ -45,7 +47,8 @@
 
 		scheduleStore.update((s) => ({
 			...s,
-			isTasksModalOpen: !s.isTasksModalOpen
+			isTasksModalOpen: !s.isTasksModalOpen,
+			isTasksOpen: window.innerWidth > 768 ? true : !s.isTasksOpen
 		}));
 
 		label = '';
@@ -85,7 +88,8 @@
 			scheduleStore.update((s) => ({
 				...s,
 				tasks: [...s.tasks, task],
-				isTasksModalOpen: !s.isTasksModalOpen
+				isTasksModalOpen: !s.isTasksModalOpen,
+				isTasksOpen: !s.isTasksOpen
 			}));
 		} else {
 			const task = await client.task.taskControllerUpdateTask({
@@ -106,7 +110,8 @@
 			scheduleStore.update((s) => ({
 				...s,
 				tasks: [...existingScheduleTasks, task],
-				isTasksModalOpen: !s.isTasksModalOpen
+				isTasksModalOpen: !s.isTasksModalOpen,
+				isTasksOpen: !s.isTasksOpen
 			}));
 		}
 
@@ -162,12 +167,12 @@
 				</div>
 			</div>
 
-			<div class="justify-caret-entertainment flex w-full flex-col items-start">
+			<div class="justify-caret-entertainment flex w-full flex-col items-start gap-4">
 				<div class="flex items-center justify-start gap-4">
 					<div class="fill-neutral">{@html Time}</div>
 					<p class="text-md text-neutral font-semibold">Время</p>
 				</div>
-				<div class="mt-4 flex flex-col gap-2 text-nowrap">
+				<div class="flex flex-col gap-4 text-nowrap">
 					<div class="flex w-full items-center justify-between gap-8">
 						<p class="text-md text-neutral font-semibold">Дата задачи</p>
 						<Input
@@ -182,8 +187,12 @@
 							inputAttributes={{ type: 'time', style: 'width: 6rem' }}
 						/>
 					</div>
-					<div class="flex items-center justify-between gap-8">
-						<p class="text-md text-neutral mt-4 font-semibold">Конец задачи</p>
+					<div class="relative flex items-center justify-between gap-8">
+						<p class="text-md text-neutral font-semibold">
+							{DateTime.fromISO(dateStartTime) > DateTime.fromISO(dateFinishTime)
+								? 'Конец задачи (след. дня)'
+								: 'Конец задачи'}
+						</p>
 						<Input
 							bind:value={dateFinishTime}
 							inputAttributes={{ type: 'time', style: 'width: 6rem' }}
